@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const { isLowercase } = require('validator');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -21,7 +22,13 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true
+    required: true,
+     validate(value) {
+        var validator = require("validator");
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Enter Strong password" + value);
+        }
+      },
   },
   // this will use when user connect whatsapp
   mobileNumber: {
@@ -44,6 +51,27 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+},{
+  timestamps:true,
 });
+
+//schema methods
+
+// userSchema.method.getJwt = async ()=>{ }  
+// cant't use arrow fun in schema methods
+
+userSchema.methods.getJWT = async function() {
+  const user = this;
+  const token = await jwt.sign({_id:user._id},process.env.JWT_SECRET,{expiresIn:"15d"})
+  return token;
+}
+
+userSchema.method.validatePassword= async function (password) {
+  const user = this;
+  const passwordHash = user.password;
+  const isPasswordValid = await bcrypt.compare(password,passwordHash)
+  return isPasswordValid;
+}
+
 
 module.exports = mongoose.model('User', userSchema);
