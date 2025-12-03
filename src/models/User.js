@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
-  // this is 6-digit code (Temporary)
+  // this will be 6-digit code (Temporary)
   verificationCode: {
     type: String,
     default: null
