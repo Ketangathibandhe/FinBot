@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { isLowercase } = require('validator');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -8,7 +9,15 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    lowercase:true,
+    trim:true,
+    validate(value){
+      const validator = require("validator")
+      if(!validator.isEmail(value)){
+        throw new Error("Email is not valid:"+value)
+      }
+    },
   },
   password: {
     type: String,
@@ -17,7 +26,13 @@ const userSchema = new mongoose.Schema({
   // this will use when user connect whatsapp
   mobileNumber: {
     type: String,
-    default: null
+    default: null,
+    validate(value){
+      const validator = require("validator")
+      if(!validator.isMobilePhone(value)){
+        throw new Error("Mobile number is not valid:"+value)
+      }
+    }
   },
   // this will be 6-digit code (Temporary)
   verificationCode: {
