@@ -18,6 +18,12 @@ app.get("/", (req, res) => {
   res.send("FinBot Server is Running!");
 });
 
+// Routes import
+const authRouter = require('./routes/auth');
+
+// Routes use
+app.use("/api/auth", authRouter);
+
 // Start Server
 connectDB()
   .then(() => {
