@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null,
     validate(value){
+      if (!value) return;
       const validator = require("validator")
       if(!validator.isMobilePhone(value)){
         throw new Error("Mobile number is not valid:"+value)
