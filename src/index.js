@@ -21,12 +21,15 @@ app.get("/", (req, res) => {
 // Routes import
 const authRouter = require('./routes/auth');
 const profileRouter = require('./routes/profile');
+const expenseRouter = require('./routes/expenses');
 
 // Routes use
 app.use("/api/auth", authRouter);
 app.use('/api/profile',profileRouter);
+app.use("/api/expense", expenseRouter);
 
-// Start Server
+
+// Starts Server
 connectDB()
   .then(() => {
     console.log("Database connection established...");
