@@ -20,9 +20,11 @@ app.get("/", (req, res) => {
 
 // Routes import
 const authRouter = require('./routes/auth');
+const profileRouter = require('./routes/profile');
 
 // Routes use
 app.use("/api/auth", authRouter);
+app.use('/api/profile',profileRouter);
 
 // Start Server
 connectDB()
