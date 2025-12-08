@@ -60,4 +60,21 @@ router.delete("/delete/:id", userAuth, async (req, res) => {
   }
 });
 
+// GET /stats - For Charts
+router.get("/stats", userAuth, async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // Group by Category
+        const categoryStats = await Expense.aggregate([
+            { $match: { user: userId } },
+            { $group: { _id: "$category", total: { $sum: "$amount" } } }
+        ]);
+
+        res.json({ data: categoryStats });
+    } catch (err) {
+        res.status(400).send(err.message);
+    }
+});
+
 module.exports = router;
