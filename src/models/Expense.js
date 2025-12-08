@@ -1,28 +1,33 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const expenseSchema = new mongoose.Schema({
-  // Linking from User table 
+  // Linking from User table
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
   title: {
     type: String, // like "Momos", "Petrol"
-    required: true
+    required: true,
   },
   amount: {
     type: Number, //  100, 500
-    required: true
+    required: true,
   },
   category: {
     type: String,
-    default: 'General' // Food, Travel, etc.
+    default: "General", // Food, Travel, etc.
+  },
+  mode: {
+    type: String,
+    enum: ["Cash", "Online", "Unknown"],
+    default: "Unknown",
   },
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-module.exports = mongoose.model('Expense', expenseSchema);
+module.exports = mongoose.model("Expense", expenseSchema);
