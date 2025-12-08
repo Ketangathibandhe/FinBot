@@ -56,7 +56,7 @@ bot.on('text', async (ctx) => {
         }
 
         // Save to Database
-       await Expense.create({
+       const savedExpense = await Expense.create({
             user: user._id,
             title: expenseData.item,
             amount: expenseData.amount,
@@ -66,10 +66,41 @@ bot.on('text', async (ctx) => {
 
         const replyText = `Expense Added!\nItem: ${expenseData.item}\nAmount: ₹${expenseData.amount}\nCategory: ${expenseData.category}\nMode: ${expenseData.mode}`;
         //edit processing message and show final result
-        ctx.telegram.editMessageText(chatId, processingMsg.message_id, null, replyText);
+        await ctx.telegram.editMessageText(chatId, processingMsg.message_id, null, replyText, {
+            reply_markup: {
+                inline_keyboard: [
+                    [ { text: "Delete", callback_data: `DELETE_${savedExpense._id}` } ]
+                ]
+            }
+        });
     } catch (err) {
         console.log("Expense Error:", err);
         ctx.reply("Error adding expense.");
+    }
+});
+
+// delete button logic
+bot.on('callback_query', async (ctx) => {
+    try {
+        const data = ctx.callbackQuery.data; // e.g.;"DELETE_65a43f..."
+
+        // if data starts with "DELETE_" 
+        if (data.startsWith("DELETE_")) {
+            
+            // extract ID
+            const expenseId = data.split("_")[1];
+
+            // delete from DB
+            await Expense.findByIdAndDelete(expenseId);
+
+            await ctx.answerCbQuery("Expense Deleted!");
+
+            // update Message 
+            await ctx.editMessageText("Expense Deleted Successfully!");
+        }
+    } catch (err) {
+        console.log("Delete Error:", err);
+        ctx.answerCbQuery("Error deleting expense.");
     }
 });
 
