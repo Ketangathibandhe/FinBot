@@ -1,7 +1,9 @@
 const { Telegraf } = require('telegraf');
+const axios = require('axios');
 const User = require('../models/User');
 const Expense = require('../models/Expense');
-const { analyzeExpenseText } = require('../services/aiService');
+const { analyzeExpense } = require('../services/aiService'); 
+
 // Token form .env
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
@@ -50,13 +52,15 @@ bot.on('text', async (ctx) => {
 
         const processingMsg = await ctx.reply('Analyzing...');
         
-        const expenseData = await analyzeExpenseText(text);
+        // processing text
+        const expenseData = await analyzeExpense(text);
+        
         if (!expenseData) {
             return ctx.telegram.editMessageText(chatId, processingMsg.message_id, null, "Could not understand. Try format: '100 Momos'");
         }
 
         // Save to Database
-       const savedExpense = await Expense.create({
+        const savedExpense = await Expense.create({
             user: user._id,
             title: expenseData.item,
             amount: expenseData.amount,
@@ -64,7 +68,8 @@ bot.on('text', async (ctx) => {
             mode: expenseData.mode
         });
 
-        const replyText = `Expense Added!\nItem: ${expenseData.item}\nAmount: ₹${expenseData.amount}\nCategory: ${expenseData.category}\nMode: ${expenseData.mode}`;
+        const replyText = `Expense Added!\nItem: ${expenseData.item}\nAmount: ${expenseData.amount}\nCategory: ${expenseData.category}\nMode: ${expenseData.mode}`;
+        
         //edit processing message and show final result
         await ctx.telegram.editMessageText(chatId, processingMsg.message_id, null, replyText, {
             reply_markup: {
@@ -76,6 +81,55 @@ bot.on('text', async (ctx) => {
     } catch (err) {
         console.log("Expense Error:", err);
         ctx.reply("Error adding expense.");
+    }
+});
+
+// expense adding logic for (Photo/Image)
+
+bot.on('photo', async (ctx) => {
+    try {
+        const chatId = ctx.chat.id.toString();
+        const user = await User.findOne({ telegramChatId: chatId });
+
+        if (!user) return ctx.reply('You are not linked! Please login to the website first.');
+
+        const processingMsg = await ctx.reply('Scanning Receipt...');
+
+        const photo = ctx.message.photo[ctx.message.photo.length - 1];
+        const fileLink = await ctx.telegram.getFileLink(photo.file_id);
+
+        const response = await axios.get(fileLink.href, { responseType: 'arraybuffer' });
+        const imageBuffer = Buffer.from(response.data);
+        const caption = ctx.message.caption || "";
+
+        const expenseData = await analyzeExpense(caption, imageBuffer);
+
+        if (!expenseData) {
+            return ctx.telegram.editMessageText(chatId, processingMsg.message_id, null, "Could not read the bill. Try again.");
+        }
+
+        
+        const savedExpense = await Expense.create({
+            user: user._id,
+            title: expenseData.item || "Scanned Receipt", 
+            amount: expenseData.amount || 0,
+            category: expenseData.category || "General",
+            mode: expenseData.mode || "Unknown"
+        });
+
+        const replyText = `Bill Scanned!\nItem: ${savedExpense.title}\nAmount: ₹${savedExpense.amount}\nCategory: ${savedExpense.category}\nMode: ${savedExpense.mode}`;
+
+        await ctx.telegram.editMessageText(chatId, processingMsg.message_id, null, replyText, {
+            reply_markup: {
+                inline_keyboard: [
+                    [ { text: "Delete", callback_data: `DELETE_${savedExpense._id}` } ]
+                ]
+            }
+        });
+
+    } catch (err) {
+        console.log("Image Error:", err);
+        ctx.reply("Error processing image.");
     }
 });
 
