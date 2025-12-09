@@ -1,32 +1,70 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai')
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-const analyzeExpense = async (text) => {
+const analyzeExpense = async (text, imageBuffer) => {
     try {
-        const prompt = `
-        Analyze this expense text: "${text}".
-        Extract the following fields in JSON format only:
-        - item (string): What was bought
-        - amount (number): Cost
-        - category (string): Best fit category (Food, Travel, Bills, Shopping, Misc)
-        - mode (string): "Cash" or "Online" (default "Unknown" if not specified)
+        let prompt = "";
+
+        // for photo (Receipt)
+        if (imageBuffer) {
+            prompt = `
+            Scan this receipt image.
+            
+            Rules:
+            1. Item: Find Shop or Restaurant Name.
+            2. Amount: Find Final Total. (IMPORTANT: Send ONLY Number, Example: 150. No '₹' or '$')
+            3. Category: Food, Travel, Shopping, etc.
+            4. Mode: Cash, Online, or Unknown.
+
+            Reply in JSON: { "item": "Name", "amount": 0, "category": "Type", "mode": "Type" }
+            `;
+        } 
+        // for text
+        else {
+            prompt = `
+            Analyze this text: "${text}"
+            
+            Rules:
+            1. Item: What was bought?
+            2. Amount: Price. (IMPORTANT: Send ONLY Number. Example: 100)
+            3. Category: Food, Travel, etc.
+            4. Mode: Cash, Online, or Unknown.
+
+            Reply in JSON: { "item": "Name", "amount": 0, "category": "Type", "mode": "Type" }
+            `;
+        }
+
+        const parts = [{ text: prompt }];
+
+        // if image the attach 
+        if (imageBuffer) {
+            parts.push({
+                inlineData: {
+                    data: imageBuffer.toString("base64"),
+                    mimeType: "image/jpeg",
+                },
+            });
+        }
+
+        const result = await model.generateContent(parts);
+        const response = await result.response;
         
-        Example Input: "100 ka petrol dala gpay se"
-        Example Output: { "item": "Petrol", "amount": 100, "category": "Travel", "mode": "Online" }
-        `;
+        let textResponse = response.text();
+        console.log("AI Output:", textResponse); 
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;//raw response
-        const textResponse = response.text();
+        // removes Markdown 
+        textResponse = textResponse.replace(/```json|```/g, "").trim();
 
-        //cleaning json and parse it (sometime res is in markdown)
-        const jsonStr = textResponse.replace(/```json|```/g, "").trim();
-        return JSON.parse(jsonStr); // for converting string to Js object
+        // String to Object 
+        const data = JSON.parse(textResponse);
+
+        return data;
+
     } catch (error) {
-        console.error("AI Error:", error);
-        return null; // Fallback handling 
+        console.log("AI Error:", error.message);
+        return null; 
     }
 };
 
