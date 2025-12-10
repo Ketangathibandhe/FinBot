@@ -56,7 +56,6 @@ const analyzeExpense = async (text, imageBuffer) => {
 
         // removes Markdown 
         textResponse = textResponse.replace(/```json|```/g, "").trim();
-
         // String to Object 
         const data = JSON.parse(textResponse);
 

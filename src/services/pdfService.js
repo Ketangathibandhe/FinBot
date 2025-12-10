@@ -44,7 +44,6 @@ const generateReport = async (userName, expenses) => {
 
         //close PDF 
         doc.end();
-        
         //once file is ready send back the path
         stream.on("finish", () => resolve(fileName));
         stream.on("error", (err) => reject(err));
