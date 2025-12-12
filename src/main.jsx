@@ -11,10 +11,10 @@ createRoot(document.getElementById("root")).render(
       <BrowserRouter>
          <ClickSpark
       sparkColor="#fff"
-      sparkSize={25}
-      sparkRadius={20}
-      sparkCount={8}
-      duration={400}
+      sparkSize={40}
+      sparkRadius={25}
+      sparkCount={10}
+      duration={300}
     >
         <App />
         </ClickSpark>

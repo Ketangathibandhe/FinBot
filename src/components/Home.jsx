@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Aurora from "../components/ReactBits/Aurora";
-
+import arrowPng from "../assets/arrow.png";
 const Home = () => {
   return (
     <Aurora
@@ -10,7 +10,7 @@ const Home = () => {
       blend={1}
       speed={1}
     >
-      {/* Grid overlay */}
+      {/* Grid*/}
       <div
         className="absolute inset-0 pointer-events-none z-10"
         style={{
@@ -30,16 +30,15 @@ const Home = () => {
         <nav className="w-full">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-100 to-purple-600 bg-clip-text text-transparent">
-                {" "}
-                FinBot{" "}
+              <h1 className="text-2xl md:text-6xl md:ml-14 font-bold bg-gradient-to-r from-blue-100 to-purple-700 bg-clip-text text-transparent">
+                FinBot
               </h1>
             </div>
 
             <div className="flex items-center gap-4">
               <Link
                 to="/login"
-                className="text-slate-300 hover:text-white font-medium transition text-sm"
+                className="text-slate-300 hover:text-white font-medium transition text-sm border-2 px-5 py-1.5 rounded-lg"
               >
                 Login
               </Link>
@@ -84,11 +83,21 @@ const Home = () => {
                 AI-Powered Expense Tracking
               </div>
 
+              {/*arrow png */}
+              <div className="relative w-full flex justify-center hidden md:block animate-pulse">
+                <img
+                  src={arrowPng}
+                  aria-hidden="true"
+                  alt="arrow"
+                  className="  absolute left-[-5%] top-[-100px] w-40 sm:w-48 md:w-56 rotate-[-47deg] opacity-90 pointer-events-none "
+                />
+              </div>
+
               <h1 className="mt-6 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
-                Track &amp; Manage Money
+                The Smartest Way to
                 <br />
-                <span className="bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
-                  Fast, Simple, Smart
+                <span className="bg-gradient-to-r from-blue-300 to-purple-700 bg-clip-text text-transparent">
+                  Track & Manage Money
                 </span>
               </h1>
 
@@ -150,7 +159,7 @@ const Home = () => {
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
                   <h4 className="font-semibold">1. Sign up & Link</h4>
                   <p className="text-slate-400 mt-2 text-sm">
                     Sign up on the web, get a unique linking code, send it to
@@ -158,7 +167,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
                   <h4 className="font-semibold">
                     2. Add expenses (Telegram / Web)
                   </h4>
@@ -169,7 +178,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
                   <h4 className="font-semibold">3. Smart AI parsing</h4>
                   <p className="text-slate-400 mt-2 text-sm">
                     Integrated Gemini OCR understands multiple languages
@@ -180,7 +189,7 @@ const Home = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
                   <h4 className="font-semibold">4. Edit & Undo</h4>
                   <p className="text-slate-400 mt-2 text-sm">
                     Mistakes? Delete or edit any transaction via bot commands or
@@ -188,7 +197,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
                   <h4 className="font-semibold">5. Monthly PDF Statements</h4>
                   <p className="text-slate-400 mt-2 text-sm">
                     Download bank-style monthly statements (PDF) with category
@@ -196,7 +205,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
                   <h4 className="font-semibold">6. Analytics & Goals</h4>
                   <p className="text-slate-400 mt-2 text-sm">
                     Visual dashboards, spending trends, top categories, and
@@ -208,7 +217,7 @@ const Home = () => {
           </section>
 
           <section className="py-8 sm:py-12">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center bg-slate-900/40 p-6 sm:p-8 rounded-2xl border border-slate-800">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center bg-slate-900/40 p-6 sm:p-8 rounded-2xl border-2 border-purple-600 hover:shadow-2xl shadow-purple-400">
               <h4 className="text-lg sm:text-xl font-bold">
                 Ready to simplify your finances?
               </h4>
