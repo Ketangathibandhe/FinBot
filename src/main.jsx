@@ -7,18 +7,16 @@ import ClickSpark from "./components/ReactBits/ClickSpark.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
- 
-      <BrowserRouter>
-         <ClickSpark
-      sparkColor="#fff"
-      sparkSize={40}
-      sparkRadius={25}
-      sparkCount={10}
-      duration={300}
-    >
+    <BrowserRouter>
+      <ClickSpark
+        sparkColor="#fff"
+        sparkSize={40}
+        sparkRadius={25}
+        sparkCount={10}
+        duration={300}
+      >
         <App />
-        </ClickSpark>
-      </BrowserRouter>
-    
+      </ClickSpark>
+    </BrowserRouter>
   </StrictMode>
 );

@@ -30,7 +30,7 @@ const Home = () => {
         <nav className="w-full">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl md:text-6xl md:ml-14 font-bold bg-gradient-to-r from-blue-100 to-purple-700 bg-clip-text text-transparent">
+              <h1 className="text-3xl md:text-6xl md:ml-14 font-bold bg-gradient-to-r from-blue-100 to-purple-400 bg-clip-text text-transparent">
                 FinBot
               </h1>
             </div>
@@ -127,7 +127,7 @@ const Home = () => {
               <div className="mt-10 flex flex-wrap gap-6 justify-center items-center text-slate-300 pb-12">
                 <div className="text-center">
                   <div className="text-xl sm:text-2xl font-bold text-white">
-                    100k+
+                    10k+
                   </div>
                   <div className="text-xs sm:text-sm">
                     Transactions processed
