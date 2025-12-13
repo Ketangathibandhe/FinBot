@@ -2,7 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Aurora from "../components/ReactBits/Aurora";
 import arrowPng from "../assets/arrow.png";
+import { useAuthStore } from "../store/authStore";
+
 const Home = () => {
+  //checks if user is loggedin or not
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <Aurora
       colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
@@ -35,42 +40,33 @@ const Home = () => {
               </h1>
             </div>
 
+            {/* NAVBAR BUTTONS LOGIC */}
             <div className="flex items-center gap-4">
-              <Link
-                to="/login"
-                className="text-slate-300 hover:text-white font-medium transition text-sm border-2 px-5 py-1.5 rounded-lg"
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="hidden sm:inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition text-sm"
-              >
-                Sign Up
-              </Link>
-
-              {/* mobile sign-up visible as icon/button */}
-              <Link
-                to="/signup"
-                className="sm:hidden inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white w-9 h-9 rounded-lg font-medium transition"
-                aria-label="Sign up"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden
+              {isAuthenticated ? (
+                // if loggedin the show Dashboard button direct
+                <Link
+                  to="/dashboard"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition text-sm shadow-lg"
                 >
-                  <path
-                    d="M12 2v20M2 12h20"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </Link>
+                  Dashboard
+                </Link>
+              ) : (
+                // if not loggedin then show Login/Signup button
+                <>
+                  <Link
+                    to="/login"
+                    className="text-slate-300 hover:text-white font-medium transition text-sm border-2 px-5 py-1.5 rounded-lg"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="hidden sm:inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition text-sm"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </nav>
@@ -108,11 +104,12 @@ const Home = () => {
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                {/*GET STARTED BUTTON */}
                 <Link
-                  to="/signup"
+                  to={isAuthenticated ? "/dashboard" : "/signup"} // same logic here also for Dashboard/signup - login button
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-3 rounded-xl text-lg sm:text-base font-bold shadow-lg shadow-blue-500/30 transition transform hover:-translate-y-0.5"
                 >
-                  Get Started For Free
+                  {isAuthenticated ? "Go to Dashboard" : "Get Started For Free"}
                 </Link>
 
                 <a
@@ -123,7 +120,7 @@ const Home = () => {
                 </a>
               </div>
 
-              {/* small stats sample*/}
+              {/*stats sample*/}
               <div className="mt-10 flex flex-wrap gap-6 justify-center items-center text-slate-300 pb-12">
                 <div className="text-center">
                   <div className="text-xl sm:text-2xl font-bold text-white">
@@ -226,18 +223,22 @@ const Home = () => {
                 tracking expenses via chat or web.
               </p>
               <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+                {/* Bottom CTA */}
                 <Link
-                  to="/signup"
+                  to={isAuthenticated ? "/dashboard" : "/signup"}
                   className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white font-semibold shadow-md text-sm sm:text-base"
                 >
-                  Create Account
+                  {isAuthenticated ? "Go to Dashboard" : "Create Account"}
                 </Link>
-                <Link
-                  to="/login"
-                  className=" font-bold px-14 py-2 rounded-lg border border-slate-700 hover:text-white text-blue-600 text-sm sm:text-base"
-                >
-                  Log In
-                </Link>
+
+                {!isAuthenticated && (
+                  <Link
+                    to="/login"
+                    className=" font-bold px-14 py-2 rounded-lg border border-slate-700 hover:text-white text-blue-600 text-sm sm:text-base"
+                  >
+                    Log In
+                  </Link>
+                )}
               </div>
             </div>
           </section>
