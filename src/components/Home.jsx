@@ -223,7 +223,7 @@ const Home = () => {
                 tracking expenses via chat or web.
               </p>
               <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
-                {/* Bottom CTA */}
+              
                 <Link
                   to={isAuthenticated ? "/dashboard" : "/signup"}
                   className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white font-semibold shadow-md text-sm sm:text-base"
