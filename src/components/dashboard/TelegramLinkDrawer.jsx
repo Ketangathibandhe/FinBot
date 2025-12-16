@@ -102,8 +102,8 @@ const TelegramLinkDrawer = ({ open, onClose }) => {
         {/* BODY */}
         <div className="p-6 space-y-5 overflow-y-auto">
           {/* LOGO */}
-          <div className="flex justify-center">
-            <img src={FinBotLogo} alt="FinBot" className="h-14" />
+          <div className="flex justify-center ">
+            <img src={FinBotLogo} alt="FinBot" className="h-14 rounded-full" />
           </div>
 
           {/* SUCCESS STATE */}
