@@ -8,7 +8,7 @@ import { useAuthStore } from "../store/authStore";
 const Login = () => {
   const navigate = useNavigate();
 
-  //  Login function from store
+  // Login function from store
   const login = useAuthStore((state) => state.login);
 
   const [email, setEmail] = useState("");
@@ -27,14 +27,19 @@ const Login = () => {
         password,
       });
 
-      //    data saved in store (Zustand)
-      // also automatically saves in localStorage
+      // checks if the token is present in the res or not
+      if (!res.data.token) {
+         throw new Error("Login successful but Token missing from server!");
+      }
+
+      // Save data in store (Zustand) & localStorage
       login(res.data.user, res.data.token);
 
       toast.success("Welcome back!");
       navigate("/dashboard"); // jump to Dashboard
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed!");
+      console.error("Login Error:", error);
+      toast.error(error.response?.data?.message || error.message || "Login failed!");
     } finally {
       setLoading(false);
     }
@@ -42,7 +47,7 @@ const Login = () => {
 
   return (
     <Aurora colorStops={["#3A29FF", "#FF94B4", "#FF3232"]} speed={0.5}>
-      {/* grid  */}
+      {/* grid */}
       <div
         className="absolute inset-0 pointer-events-none z-10"
         style={{
@@ -90,7 +95,7 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition pr-10"
-                  placeholder="......."
+                  placeholder="••••••••"
                 />
                 <button
                   type="button"

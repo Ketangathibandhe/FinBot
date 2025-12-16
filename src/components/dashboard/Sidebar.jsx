@@ -1,6 +1,6 @@
 import {
   Home,
-  LayoutGrid,
+  LayoutDashboard,
   PlusCircle,
   Send,
   FileText,
@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 
-const Sidebar = ({ open, setOpen }) => {
+const Sidebar = ({ open, setOpen, onLinkClick }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
 
@@ -31,7 +31,7 @@ const Sidebar = ({ open, setOpen }) => {
         ${open ? "translate-x-0" : "-translate-x-full"}
       `}
     >
-      {/*header*/}
+      {/* HEADER */}
       <div className="flex items-center justify-between px-4 h-16 border-b border-slate-800">
         <span className="ml-2 text-2xl font-bold bg-linear-to-r from-blue-300 to-purple-600 bg-clip-text text-transparent">
           FinBot
@@ -44,7 +44,7 @@ const Sidebar = ({ open, setOpen }) => {
         </button>
       </div>
 
-      {/*menu*/}
+      {/* MENU */}
       <nav className="p-3 space-y-1 text-slate-300">
         <MenuItem
           icon={<Home size={18} />}
@@ -52,19 +52,28 @@ const Sidebar = ({ open, setOpen }) => {
           onClick={() => navigate("/")}
         />
         <MenuItem
-          icon={<LayoutGrid size={18} />}
+          icon={<LayoutDashboard size={18} />}
           label="Dashboard"
           onClick={() => navigate("/dashboard")}
         />
         <MenuItem icon={<PlusCircle size={18} />} label="Add Expense" />
-        <MenuItem icon={<Send size={18} />} label="Telegram Bot" />
+
+      
+        <MenuItem
+          icon={<Send size={18} />}
+          label="Link TelegramBot"
+          onClick={() => {
+            setOpen(false);   // sidebar close
+            onLinkClick();    // same drawer open for telegram linking
+          }}
+        />
+
         <MenuItem icon={<FileText size={18} />} label="Reports" />
       </nav>
 
       {/* USER CARD */}
       <div className="absolute bottom-4 left-0 w-full px-3">
         <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 space-y-2">
-          {/* USER INFO*/}
           <div className="px-3 py-2 rounded-lg border border-slate-800">
             <p className="text-sm font-semibold text-white">
               {user?.name ? `${user.name}'s` : "User's"}
@@ -72,31 +81,22 @@ const Sidebar = ({ open, setOpen }) => {
             <p className="text-xs text-slate-400">Personal Dashboard</p>
           </div>
 
-          {/* TELEGRAM linked status*/}
           <div className="flex items-center px-3 py-2 rounded-lg border border-slate-800 text-slate-300">
             <span>TelegramBot</span>
-
-            {/* status dot*/}
             <div className="ml-auto relative flex items-center justify-center">
-              {/* Ping ring */}
               <span
-                className={`
-                  absolute inline-flex h-4 w-4 rounded-full
-                  ${isTelegramLinked ? "bg-green-500/40" : "bg-red-500/40"}
-                  animate-ping
-                `}
-              ></span>
-
+                className={`absolute inline-flex h-4 w-4 rounded-full ${
+                  isTelegramLinked ? "bg-green-500/40" : "bg-red-500/40"
+                } animate-ping`}
+              />
               <span
-                className={`
-                  relative inline-flex h-2.5 w-2.5 rounded-full
-                  ${isTelegramLinked ? "bg-green-500" : "bg-red-500"}
-                `}
-              ></span>
+                className={`relative inline-flex h-2.5 w-2.5 rounded-full ${
+                  isTelegramLinked ? "bg-green-500" : "bg-red-500"
+                }`}
+              />
             </div>
           </div>
 
-          {/* LOGOUT */}
           <div
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2 rounded-lg

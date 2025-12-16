@@ -1,1 +1,13 @@
 @import "tailwindcss";
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.35s ease-out;
+}

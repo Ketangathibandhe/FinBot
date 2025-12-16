@@ -8,7 +8,7 @@ import { useAuthStore } from "../store/authStore";
 const Signup = () => {
   const navigate = useNavigate();
 
-  //  Login function from store
+  // Login function from store
   const login = useAuthStore((state) => state.login);
 
   const [name, setName] = useState("");
@@ -35,12 +35,18 @@ const Signup = () => {
         { email, password }
       );
 
+      //  Check if token exists before saving
+      if (!loginRes.data.token) {
+        throw new Error("Signup success but Token missing!");
+      }
+
       // saved in store (Zustand)
       login(loginRes.data.user, loginRes.data.token);
 
       toast.success("Account Created! ");
       navigate("/dashboard"); // jump to Dashboard
     } catch (error) {
+       console.error("Signup Error:", error);
       toast.error(error.response?.data?.message || "Signup failed!");
     } finally {
       setLoading(false);
@@ -112,7 +118,7 @@ const Signup = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition pr-10"
-                  placeholder="......."
+                  placeholder="••••••••"
                 />
                 <button
                   type="button"

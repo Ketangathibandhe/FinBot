@@ -1,8 +1,11 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
+import TelegramAlert from "./TelegramAlert";
+import TelegramLinkDrawer from "./TelegramLinkDrawer";
 
 const Dashboard = () => {
   const [open, setOpen] = useState(false);
+  const [openTelegramDrawer, setOpenTelegramDrawer] = useState(false);
 
   return (
     <div className="relative min-h-screen bg-[#0b1020] text-white overflow-hidden">
@@ -18,7 +21,7 @@ const Dashboard = () => {
         }}
       />
 
-      {/*click outside to close*/}
+      {/* click outside to close sidebar */}
       {open && (
         <div
           onClick={() => setOpen(false)}
@@ -26,10 +29,10 @@ const Dashboard = () => {
         />
       )}
 
-      {/*sidebar*/}
-      <Sidebar open={open} setOpen={setOpen} />
+      {/* SIDEBAR */}
+      <Sidebar open={open} setOpen={setOpen} onLinkClick={() => setOpenTelegramDrawer(true)} />
 
-      {/*main */}
+      {/* MAIN */}
       <main
         className={`
           relative z-20 min-h-screen
@@ -37,10 +40,8 @@ const Dashboard = () => {
           ${open ? "ml-64" : "ml-0"}
         `}
       >
-        
+        {/* HEADER */}
         <header className="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
-
-          {/* MENU BUTTON */}
           <button
             onClick={() => setOpen(true)}
             className={`
@@ -58,17 +59,30 @@ const Dashboard = () => {
             </svg>
           </button>
 
-      
           <h1 className="text-xl font-bold">Dashboard</h1>
         </header>
 
-      
+        {/*Telegram Alert*/}
+        <div className="px-6 pt-4">
+          <TelegramAlert
+            onLinkClick={() => setOpenTelegramDrawer(true)}
+          />
+        </div>
+
+        {/* CONTENT */}
         <section className="p-6">
           <p className="text-slate-400">
             Welcome to FinBot Dashboard
           </p>
         </section>
       </main>
+
+      {/*TELEGRAM LINK DRAWER  */}
+      <TelegramLinkDrawer
+        open={openTelegramDrawer}
+        onClose={() => setOpenTelegramDrawer(false)}
+        code="123456" //dummy
+      />
     </div>
   );
 };
