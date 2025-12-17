@@ -21,8 +21,8 @@ const expenseSchema = new mongoose.Schema({
   },
   mode: {
     type: String,
-    enum: ["Cash", "Online", "Unknown"],
-    default: "Unknown",
+    enum: ["Cash", "Online"],
+    default: "Cash",
   },
   date: {
     type: Date,
