@@ -2,10 +2,13 @@ import { useState } from "react";
 import Sidebar from "./Sidebar";
 import TelegramAlert from "./TelegramAlert";
 import TelegramLinkDrawer from "./TelegramLinkDrawer";
+import AddExpenseDrawer from "./AddExpenseDrawer";
 
 const Dashboard = () => {
   const [open, setOpen] = useState(false);
   const [openTelegramDrawer, setOpenTelegramDrawer] = useState(false);
+  // State for Add Expense Drawer
+  const [openAddExpenseDrawer, setOpenAddExpenseDrawer] = useState(false);
 
   return (
     <div className="relative min-h-screen bg-[#0b1020] text-white overflow-hidden">
@@ -30,7 +33,13 @@ const Dashboard = () => {
       )}
 
       {/* SIDEBAR */}
-      <Sidebar open={open} setOpen={setOpen} onLinkClick={() => setOpenTelegramDrawer(true)} />
+      {/*Pass onAddExpenseClick handler */}
+      <Sidebar 
+        open={open} 
+        setOpen={setOpen} 
+        onLinkClick={() => setOpenTelegramDrawer(true)}
+        onAddExpenseClick={() => setOpenAddExpenseDrawer(true)} 
+      />
 
       {/* MAIN */}
       <main
@@ -77,11 +86,16 @@ const Dashboard = () => {
         </section>
       </main>
 
-      {/*TELEGRAM LINK DRAWER  */}
+      {/*TELEGRAM LINK DRAWER */}
       <TelegramLinkDrawer
         open={openTelegramDrawer}
         onClose={() => setOpenTelegramDrawer(false)}
-        code="123456" //dummy
+      />
+
+      {/*ADD EXPENSE DRAWER */}
+      <AddExpenseDrawer 
+        open={openAddExpenseDrawer}
+        onClose={() => setOpenAddExpenseDrawer(false)}
       />
     </div>
   );

@@ -10,7 +10,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 
-const Sidebar = ({ open, setOpen, onLinkClick }) => {
+// Accept onAddExpenseClick prop
+const Sidebar = ({ open, setOpen, onLinkClick, onAddExpenseClick }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
 
@@ -56,7 +57,16 @@ const Sidebar = ({ open, setOpen, onLinkClick }) => {
           label="Dashboard"
           onClick={() => navigate("/dashboard")}
         />
-        <MenuItem icon={<PlusCircle size={18} />} label="Add Expense" />
+        
+        {/* Update Add Expense MenuItem */}
+        <MenuItem 
+            icon={<PlusCircle size={18} />} 
+            label="Add Expense"
+            onClick={() => {
+                setOpen(false); // Close sidebar
+                onAddExpenseClick(); // Open Expense Drawer
+            }}
+        />
 
       
         <MenuItem
