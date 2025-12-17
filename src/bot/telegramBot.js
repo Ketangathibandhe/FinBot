@@ -180,7 +180,7 @@ bot.on("photo", async (ctx) => {
         chatId,
         processingMsg.message_id,
         null,
-        "Could not read the bill. Try again."
+        "Could not read the bill.Try again later."
       );
     }
 

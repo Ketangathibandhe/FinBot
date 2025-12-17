@@ -16,7 +16,7 @@ const analyzeExpense = async (text, imageBuffer) => {
             1. Item: Find Shop or Restaurant Name.
             2. Amount: Find Final Total. (IMPORTANT: Send ONLY Number, Example: 150. No '₹' or '$')
             3. Category: Food, Travel, Shopping, etc.
-            4. Mode: Cash, Online, or Unknown.
+            4. Mode: Cash or Online. Default mode will be Cash.
 
             Reply in JSON: { "item": "Name", "amount": 0, "category": "Type", "mode": "Type" }
             `;
@@ -30,7 +30,7 @@ const analyzeExpense = async (text, imageBuffer) => {
             1. Item: What was bought?
             2. Amount: Price. (IMPORTANT: Send ONLY Number. Example: 100)
             3. Category: Food, Travel, etc.
-            4. Mode: Cash, Online, or Unknown.
+            4. Mode: Cash or Online. Default mode will be Cash.
 
             Reply in JSON: { "item": "Name", "amount": 0, "category": "Type", "mode": "Type" }
             `;
