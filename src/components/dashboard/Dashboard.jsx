@@ -1,103 +1,108 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import TelegramAlert from "./TelegramAlert";
 import TelegramLinkDrawer from "./TelegramLinkDrawer";
 import AddExpenseDrawer from "./AddExpenseDrawer";
+import { useAuthStore } from "../../store/authStore";
+import { useExpenseStore } from "../../store/expenseStore";
+import Aurora from "../ReactBits/Aurora";
+
+// ✅ UPDATED IMPORTS (Folder name changed to 'Widgets')
+import StatsGrid from "./Widgets/StatsGrid";
+import SpendingChart from "./Widgets/SpendingChart";
+import CategoryChart from "./Widgets/CategoryChart";
+import RecentTransactions from "./Widgets/RecentTransactions";
 
 const Dashboard = () => {
   const [open, setOpen] = useState(false);
   const [openTelegramDrawer, setOpenTelegramDrawer] = useState(false);
-  // State for Add Expense Drawer
   const [openAddExpenseDrawer, setOpenAddExpenseDrawer] = useState(false);
 
+  const { token, user } = useAuthStore();
+  const { expenses, stats, fetchDashboardData, deleteExpense } = useExpenseStore();
+
+  useEffect(() => {
+    if (token) fetchDashboardData(token);
+  }, [token]);
+
+  const currentMonthYear = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+
   return (
-    <div className="relative min-h-screen bg-[#0b1020] text-white overflow-hidden">
+    <Aurora colorStops={["#3A29FF", "#FF94B4", "#FF3232"]} amplitude={1.0} blend={0.5} speed={0.5}>
+        <div className="relative min-h-screen text-white overflow-hidden font-sans selection:bg-blue-500/30">
 
-      {/* GRID BG */}
-      <div
-        className="absolute inset-0 z-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.05) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,0.05) 2px, transparent 2px)",
-          backgroundSize: "48px 48px",
-          opacity: 0.35,
-        }}
-      />
-
-      {/* click outside to close sidebar */}
-      {open && (
-        <div
-          onClick={() => setOpen(false)}
-          className="fixed inset-0 bg-black/40 z-30"
+        {/* BACKGROUND GRID */}
+        <div className="absolute inset-0 pointer-events-none z-10"
+            style={{
+            backgroundImage: "linear-gradient(transparent 0, rgba(255,255,255,0.035) 1.5px), linear-gradient(90deg, transparent 0, rgba(255,255,255,0.035) 1px)",
+            backgroundSize: "48px 48px",
+            mixBlendMode: "overlay", 
+            }}
+            aria-hidden="true"
         />
-      )}
 
-      {/* SIDEBAR */}
-      {/*Pass onAddExpenseClick handler */}
-      <Sidebar 
-        open={open} 
-        setOpen={setOpen} 
-        onLinkClick={() => setOpenTelegramDrawer(true)}
-        onAddExpenseClick={() => setOpenAddExpenseDrawer(true)} 
-      />
+        {/* Sidebar Overlay */}
+        {open && <div onClick={() => setOpen(false)} className="fixed inset-0 bg-black/80 backdrop-blur-sm z-30" />}
 
-      {/* MAIN */}
-      <main
-        className={`
-          relative z-20 min-h-screen
-          transition-[margin] duration-300 ease-in-out
-          ${open ? "ml-64" : "ml-0"}
-        `}
-      >
-        {/* HEADER */}
-        <header className="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
-          <button
-            onClick={() => setOpen(true)}
-            className={`
-              p-2 rounded-lg transition
-              ${open ? "opacity-0 pointer-events-none" : "hover:bg-slate-800"}
-            `}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M3 6H21M3 12H21M3 18H21"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
-
-          <h1 className="text-xl font-bold">Dashboard</h1>
-        </header>
-
-        {/*Telegram Alert*/}
-        <div className="px-6 pt-4">
-          <TelegramAlert
+        {/* SIDEBAR */}
+        <Sidebar 
+            open={open} 
+            setOpen={setOpen} 
             onLinkClick={() => setOpenTelegramDrawer(true)}
-          />
+            onAddExpenseClick={() => setOpenAddExpenseDrawer(true)} 
+        />
+
+        {/* MAIN LAYOUT */}
+        <main className={`relative z-20 min-h-screen transition-[margin] duration-300 ease-out ${open ? "ml-64" : "ml-0"}`}>
+            
+            {/* HEADER */}
+            <header className="h-20 flex items-center justify-between px-6 sm:px-12 sticky top-0 z-20 bg-[#050505]/70 backdrop-blur-xl border-b border-white/5">
+                <div className="flex items-center gap-6">
+                    <button onClick={() => setOpen(true)} className={`p-2 -ml-2 rounded-xl text-gray-400 hover:text-white transition ${open ? "opacity-0 pointer-events-none" : ""}`}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    </button>
+                    <div className="flex flex-col">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                            {user?.name ? `${user.name}'s Dashboard` : "My Dashboard"}
+                        </h1>
+                        <p className="text-xs sm:text-sm text-gray-500 font-medium">Overview for {currentMonthYear}</p>
+                    </div>
+                </div>
+                
+                <button onClick={() => setOpenAddExpenseDrawer(true)} className="hidden sm:flex items-center gap-2 bg-white text-black px-5 py-2 rounded-full font-semibold text-sm hover:bg-gray-200 transition shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                    + Add Expense
+                </button>
+            </header>
+
+            {/* TELEGRAM ALERT */}
+            <div className="px-6 sm:px-12 pt-6">
+                <TelegramAlert onLinkClick={() => setOpenTelegramDrawer(true)} />
+            </div>
+
+            {/* DASHBOARD WIDGETS */}
+            <div className="px-6 sm:px-12 pb-12 pt-2 max-w-[1920px] mx-auto space-y-6">
+                
+                {/* 1. Stats Grid */}
+                <StatsGrid stats={stats} expensesCount={expenses.length} />
+
+                {/* 2. Charts Row */}
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-auto xl:h-[450px]">
+                    <SpendingChart data={stats.dailyStats} />
+                    <CategoryChart data={stats.categoryStats} total={stats.totalExpense} />
+                </div>
+
+                {/* 3. Transactions List */}
+                <RecentTransactions expenses={expenses} onDelete={deleteExpense} token={token} />
+
+            </div>
+        </main>
+
+        <TelegramLinkDrawer open={openTelegramDrawer} onClose={() => setOpenTelegramDrawer(false)} />
+        <AddExpenseDrawer open={openAddExpenseDrawer} onClose={() => { setOpenAddExpenseDrawer(false); fetchDashboardData(token); }} />
         </div>
-
-        {/* CONTENT */}
-        <section className="p-6">
-          <p className="text-slate-400">
-            Welcome to FinBot Dashboard
-          </p>
-        </section>
-      </main>
-
-      {/*TELEGRAM LINK DRAWER */}
-      <TelegramLinkDrawer
-        open={openTelegramDrawer}
-        onClose={() => setOpenTelegramDrawer(false)}
-      />
-
-      {/*ADD EXPENSE DRAWER */}
-      <AddExpenseDrawer 
-        open={openAddExpenseDrawer}
-        onClose={() => setOpenAddExpenseDrawer(false)}
-      />
-    </div>
+    </Aurora>
   );
 };
 
