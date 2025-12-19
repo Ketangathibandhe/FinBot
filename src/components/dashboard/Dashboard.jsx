@@ -7,7 +7,6 @@ import { useAuthStore } from "../../store/authStore";
 import { useExpenseStore } from "../../store/expenseStore";
 import Aurora from "../ReactBits/Aurora";
 
-// ✅ UPDATED IMPORTS (Folder name changed to 'Widgets')
 import StatsGrid from "./Widgets/StatsGrid";
 import SpendingChart from "./Widgets/SpendingChart";
 import CategoryChart from "./Widgets/CategoryChart";
@@ -34,7 +33,7 @@ const Dashboard = () => {
         {/* BACKGROUND GRID */}
         <div className="absolute inset-0 pointer-events-none z-10"
             style={{
-            backgroundImage: "linear-gradient(transparent 0, rgba(255,255,255,0.035) 1.5px), linear-gradient(90deg, transparent 0, rgba(255,255,255,0.035) 1px)",
+            backgroundImage: "linear-gradient(transparent 0, rgba(255,255,255,0.035) 2.5px), linear-gradient(90deg, transparent 0, rgba(255,255,255,0.035) 2.5px)",
             backgroundSize: "48px 48px",
             mixBlendMode: "overlay", 
             }}
@@ -52,7 +51,7 @@ const Dashboard = () => {
             onAddExpenseClick={() => setOpenAddExpenseDrawer(true)} 
         />
 
-        {/* MAIN LAYOUT */}
+       
         <main className={`relative z-20 min-h-screen transition-[margin] duration-300 ease-out ${open ? "ml-64" : "ml-0"}`}>
             
             {/* HEADER */}
@@ -84,7 +83,7 @@ const Dashboard = () => {
             {/* DASHBOARD WIDGETS */}
             <div className="px-6 sm:px-12 pb-12 pt-2 max-w-[1920px] mx-auto space-y-6">
                 
-                {/* 1. Stats Grid */}
+                {/* 1.Stats Grid */}
                 <StatsGrid stats={stats} expensesCount={expenses.length} />
 
                 {/* 2. Charts Row */}
@@ -93,7 +92,7 @@ const Dashboard = () => {
                     <CategoryChart data={stats.categoryStats} total={stats.totalExpense} />
                 </div>
 
-                {/* 3. Transactions List */}
+                {/* 3.Transactions List */}
                 <RecentTransactions expenses={expenses} onDelete={deleteExpense} token={token} />
 
             </div>

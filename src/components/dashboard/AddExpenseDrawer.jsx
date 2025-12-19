@@ -98,7 +98,7 @@ const AddExpenseDrawer = ({ open, onClose }) => {
     }
   };
 
-  const categories = ["Food", "Travel", "Bills", "Shopping", "Entertainment", "Health", "Others"];
+  const categories = ["Food", "Travel", "Fuel", "Shopping", "Entertainment", "Bills", "Health", "Education", "Groceries", "General"];
 
   if (!open) return null;
 

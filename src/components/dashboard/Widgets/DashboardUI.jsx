@@ -1,16 +1,19 @@
 import React from 'react';
 export const CATEGORY_STYLES = {
   Food: { color: '#3b82f6', bg: 'bg-blue-500', shadow: 'shadow-blue-500/50' }, 
-  Travel: { color: '#a855f7', bg: 'bg-purple-500', shadow: 'shadow-purple-500/50' }, 
+  Travel: { color: '#8b5cf6', bg: 'bg-violet-500', shadow: 'shadow-violet-500/50' }, 
   Fuel: { color: '#10b981', bg: 'bg-emerald-500', shadow: 'shadow-emerald-500/50' }, 
   Shopping: { color: '#ec4899', bg: 'bg-pink-500', shadow: 'shadow-pink-500/50' }, 
   Entertainment: { color: '#f59e0b', bg: 'bg-amber-500', shadow: 'shadow-amber-500/50' }, 
   Bills: { color: '#ef4444', bg: 'bg-red-500', shadow: 'shadow-red-500/50' }, 
   Health: { color: '#06b6d4', bg: 'bg-cyan-500', shadow: 'shadow-cyan-500/50' }, 
-  Others: { color: '#6b7280', bg: 'bg-gray-500', shadow: 'shadow-gray-500/50' } 
+  Education: { color: '#0ea5e9', bg: 'bg-sky-500', shadow: 'shadow-sky-500/50' }, 
+  Groceries: { color: '#84cc16', bg: 'bg-lime-500', shadow: 'shadow-lime-500/50' }, 
+  // Fallback
+  General: { color: '#6b7280', bg: 'bg-gray-500', shadow: 'shadow-gray-500/50' },
 };
 
-export const getCategoryStyle = (cat) => CATEGORY_STYLES[cat] || CATEGORY_STYLES['Others'];
+export const getCategoryStyle = (cat) => CATEGORY_STYLES[cat] || CATEGORY_STYLES['General'];
 
 // CARD WRAPPER 
 export const BentoCard = ({ children, className }) => (
