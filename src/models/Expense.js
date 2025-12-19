@@ -17,7 +17,9 @@ const expenseSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    default: "General", // Food, Travel, etc.
+    required: true,
+    enum: ["Food", "Travel", "Fuel", "Shopping", "Entertainment", "Bills", "Health", "Education", "Groceries", "General"],
+    default: "General"
   },
   mode: {
     type: String,
