@@ -1,4 +1,4 @@
-import { X, Upload, Trash2, PlusCircle, Calendar, IndianRupee, Tag, ShoppingBag } from "lucide-react";
+import { X, Upload, Trash2, PlusCircle, Calendar, IndianRupee, Tag, ShoppingBag, ChevronDown } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -10,55 +10,47 @@ const AddExpenseDrawer = ({ open, onClose }) => {
 
   const [loading, setLoading] = useState(false);
   
-  // form states 
   const [amount, setAmount] = useState("");
-  const [title, setTitle] = useState(""); // item name
+  const [title, setTitle] = useState(""); 
   const [category, setCategory] = useState("Food");
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // default to today
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]); 
   
-  // file states
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
 
-  // close on escape key
   useEffect(() => {
     const esc = (e) => e.key === "Escape" && onClose();
     if (open) window.addEventListener("keydown", esc);
     return () => window.removeEventListener("keydown", esc);
   }, [open, onClose]);
 
-  // reset form when drawer closes
   useEffect(() => {
     if (!open) {
         setAmount("");
         setTitle("");
         setCategory("Food");
         setDate(new Date().toISOString().split('T')[0]);
-        handleDeleteFile(); // clear file
+        handleDeleteFile(); 
     }
   }, [open]);
 
-  // handle file selection
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file)); // show preview
+      setPreviewUrl(URL.createObjectURL(file)); 
     }
   };
 
-  // remove selected file
   const handleDeleteFile = () => {
     setSelectedFile(null);
     setPreviewUrl(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    //either file OR (amount + item + category) is required
     if (!selectedFile && (!amount || !title)) {
         toast.error("Please enter Amount & Item Name OR Upload a Receipt");
         return;
@@ -74,7 +66,6 @@ const AddExpenseDrawer = ({ open, onClose }) => {
       if(date) formData.append("date", date);
       if(selectedFile) formData.append("receipt", selectedFile);
 
-      // sending to backend
       await axios.post(
         "http://localhost:5000/api/expense/add", 
         formData,
@@ -100,34 +91,48 @@ const AddExpenseDrawer = ({ open, onClose }) => {
 
   const categories = ["Food", "Travel", "Fuel", "Shopping", "Entertainment", "Bills", "Health", "Education", "Groceries", "General"];
 
-  if (!open) return null;
-
   return (
     <>
-      {/* black background */}
-      <div onClick={onClose} className="fixed inset-0 bg-black/50 z-40 transition-opacity" />
+      <div 
+        onClick={onClose} 
+        className={`fixed inset-0 bg-black/60 backdrop-blur-md z-40 transition-opacity duration-300 ${
+            open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`} 
+      />
 
-      {/* drawer container */}
-      <div className="fixed bottom-0 left-0 z-50 w-full h-[85vh] bg-slate-900 border-t border-slate-800 rounded-t-2xl animate-slideUp flex flex-col">
+      <div className={`
+        fixed inset-x-0 bottom-0 z-50 w-full h-[85vh] 
+        bg-[#0F1219] border-t border-white/10 
+        rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.6)] 
+        transform transition-transform duration-300 ease-out flex flex-col
+        ${open ? "translate-y-0 pointer-events-auto" : "translate-y-full pointer-events-none"}
+      `}>
 
-        {/* header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
-          <h2 className="text-lg font-bold flex items-center gap-2">
-             <PlusCircle size={20} className="text-blue-500"/> Add Expense
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-lg">
-            <X size={18} />
+        <div className="w-full flex justify-center pt-3 pb-1 shrink-0">
+            <div className="w-12 h-1.5 bg-gray-700/50 rounded-full"></div>
+        </div>
+
+        <div className="flex items-center justify-between px-6 py-4 shrink-0">
+          <div className="flex items-center gap-4">
+                <div className="p-3 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl border border-white/5">
+                    <PlusCircle size={24} className="text-blue-400" />
+                </div>
+                <div>
+                    <h2 className="text-xl font-bold text-white tracking-tight">Add Expense</h2>
+                    <p className="text-xs text-gray-500 font-medium mt-0.5">Manually or via Receipt Scan</p>
+                </div>
+          </div>
+          <button onClick={onClose} className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition text-gray-400 hover:text-white border border-transparent hover:border-white/10">
+            <X size={20} />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto flex-1">
-            <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
+            <form onSubmit={handleSubmit} className="space-y-6 max-w-lg mx-auto">
                 
-                {/*  upload receipt  */}
-                <div>
-                    <label className="block text-slate-300 text-sm font-medium mb-3">Upload Receipt</label>
+                <div className="space-y-3">
+                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Receipt Scan (AI)</label>
                     
-                    {/* hidden input */}
                     <input 
                         type="file" 
                         ref={fileInputRef}
@@ -136,119 +141,115 @@ const AddExpenseDrawer = ({ open, onClose }) => {
                         className="hidden"
                     />
 
-                    <div className="flex items-center gap-4 p-3 bg-slate-800/50 rounded-xl border border-slate-700/50">
-                        <div className="w-16 h-16 shrink-0 bg-slate-700/80 rounded-lg flex items-center justify-center overflow-hidden border border-slate-600">
-                            {previewUrl ? (
+                    {!selectedFile ? (
+                        <div 
+                            onClick={() => fileInputRef.current?.click()}
+                            className="border border-dashed border-white/20 bg-[#1A1F2E]/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-blue-500/50 hover:bg-[#1A1F2E] transition-all group"
+                        >
+                            <div className="p-3 bg-blue-500/10 rounded-full text-blue-400 group-hover:scale-110 transition-transform">
+                                <Upload size={24} />
+                            </div>
+                            <div className="text-center">
+                                <p className="text-sm font-semibold text-white group-hover:text-blue-400 transition-colors">Tap to Upload Receipt</p>
+                                <p className="text-xs text-gray-500 mt-1">AI will auto-detect amount & details</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="relative bg-[#1A1F2E] border border-white/10 rounded-2xl p-3 flex items-center gap-4 animate-fadeIn">
+                            <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-white/10 bg-black">
                                 <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                            ) : (
-                                <Upload size={24} className="text-slate-400" />
-                            )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-white truncate">{selectedFile.name}</p>
+                                <p className="text-xs text-blue-400 mt-0.5">Ready to scan</p>
+                            </div>
+                            <button 
+                                type="button"
+                                onClick={handleDeleteFile}
+                                className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition"
+                            >
+                                <Trash2 size={18} />
+                            </button>
                         </div>
-
-                        {/* upload buttons */}
-                        <div className="flex flex-col gap-2 flex-1">
-                             <div className="flex gap-2">
-                                <button 
-                                    type="button"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-4 py-2 rounded-lg transition flex-1"
-                                >
-                                    Choose Image
-                                </button>
-                                <button 
-                                    type="button"
-                                    onClick={handleDeleteFile}
-                                    disabled={!selectedFile}
-                                    className="text-red-400 border border-red-500/30 hover:bg-red-500/10 px-3 py-2 rounded-lg transition disabled:opacity-50"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                             </div>
-                             <p className="text-[10px] text-slate-500 text-center">AI will auto-detect amount & details</p>
-                        </div>
-                    </div>
+                    )}
                 </div>
 
-                {/*Or divider */}
-                <div className="flex items-center justify-center relative py-2">
+                <div className="flex items-center justify-center relative py-2 opacity-60">
                     <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-slate-700"></span>
+                        <span className="w-full border-t border-white/10"></span>
                     </div>
-                    <span className="relative bg-slate-900 px-4 text-sm text-slate-500 font-medium">OR ADD MANUALLY</span>
+                    <span className="relative bg-[#0F1219] px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">OR ADD MANUALLY</span>
                 </div>
 
-                {/* manual form  */}
-                <div className={selectedFile ? "opacity-50 pointer-events-none" : ""}>
-                    
+                <div className={`space-y-5 transition-opacity duration-300 ${selectedFile ? "opacity-30 pointer-events-none" : "opacity-100"}`}>
                     
                     <div className="grid grid-cols-2 gap-4">
-                        {/* amount field */}
-                        <div>
-                            <label className="block text-slate-300 text-sm font-medium mb-2">Amount</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <IndianRupee size={16} className="text-slate-400" />
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Amount</label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-500 group-hover:text-blue-400 transition-colors">
+                                    <IndianRupee size={16} />
                                 </div>
                                 <input 
                                     type="number" 
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
                                     placeholder="0"
-                                    className="w-full pl-9 bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-10 bg-[#1A1F2E] border border-white/10 text-white font-medium rounded-xl py-3.5 px-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
                             </div>
                         </div>
 
-                         {/* date field */}
-                         <div>
-                            <label className="block text-slate-300 text-sm font-medium mb-2">Date</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Calendar size={16} className="text-slate-400" />
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Date</label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-500 group-hover:text-blue-400 transition-colors">
+                                    <Calendar size={16} />
                                 </div>
                                 <input 
                                     type="date" 
                                     value={date}
                                     onChange={(e) => setDate(e.target.value)}
-                                    className="w-full pl-9 bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition dark:[color-scheme:dark]"
+                                    className="w-full pl-10 bg-[#1A1F2E] border border-white/10 text-white font-medium rounded-xl py-3.5 px-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all dark:[color-scheme:dark] text-sm"
                                 />
                             </div>
                         </div>
                     </div>
 
-                    {/* item field */}
-                    <div className="mt-4">
-                        <label className="block text-slate-300 text-sm font-medium mb-2">Item Name</label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <ShoppingBag size={16} className="text-slate-400" />
+                    <div className="space-y-2">
+                        <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Item Name</label>
+                        <div className="relative group">
+                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-500 group-hover:text-blue-400 transition-colors">
+                                <ShoppingBag size={16} />
                             </div>
                             <input 
                                 type="text" 
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                placeholder="e.g. Momos, Petrol, Movie"
-                                className="w-full pl-9 bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"
+                                placeholder="e.g. Starbucks, Uber, Movie"
+                                className="w-full pl-10 bg-[#1A1F2E] border border-white/10 text-white font-medium rounded-xl py-3.5 px-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-600"
                             />
                         </div>
                     </div>
 
-                    {/* category field */}
-                    <div className="mt-4">
-                         <label className="block text-slate-300 text-sm font-medium mb-2">Category</label>
-                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Tag size={16} className="text-slate-400" />
+                    <div className="space-y-2">
+                         <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Category</label>
+                         <div className="relative group">
+                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-500 group-hover:text-blue-400 transition-colors">
+                                    <Tag size={16} />
                             </div>
                             <select
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
-                                className="w-full pl-9 bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition appearance-none"
+                                className="w-full pl-10 bg-[#1A1F2E] border border-white/10 text-white font-medium rounded-xl py-3.5 px-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all appearance-none cursor-pointer"
                             >
                                 {categories.map((cat) => (
-                                    <option key={cat} value={cat} className="bg-slate-900 text-white">{cat}</option>
+                                    <option key={cat} value={cat} className="bg-[#0F1219] text-white py-2">{cat}</option>
                                 ))}
                             </select>
+                            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-600">
+                                <ChevronDown size={16} />
+                            </div>
                          </div>
                     </div>
                 </div>
@@ -256,15 +257,23 @@ const AddExpenseDrawer = ({ open, onClose }) => {
             </form>
         </div>
 
-         {/* footer button */}
-         <div className="p-6 border-t border-slate-800 shrink-0 bg-slate-900">
-             <button
-                onClick={handleSubmit}
-                disabled={loading}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-lg shadow-lg active:scale-95 disabled:opacity-50 transition"
-             >
-                {loading ? "Saving..." : selectedFile ? "Scan & Add Receipt" : "Add Expense"}
-             </button>
+         <div className="p-3 border-t border-white/5 shrink-0 bg-[#0F1219]">
+            <div className="max-w-lg mx-auto">
+                 <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-bold text-base shadow-lg shadow-blue-500/25 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 border border-white/10"
+                 >
+                    {loading ? (
+                        <>
+                             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                             {selectedFile ? "Scanning..." : "Saving..."}
+                        </>
+                    ) : (
+                        selectedFile ? "Scan & Add Receipt" : "Add Expense"
+                    )}
+                 </button>
+            </div>
          </div>
       </div>
     </>

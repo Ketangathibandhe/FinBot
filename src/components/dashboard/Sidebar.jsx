@@ -1,17 +1,14 @@
-import {
-  Home,
-  LayoutDashboard,
-  PlusCircle,
-  Send,
-  FileText,
-  LogOut,
-  X,
-} from "lucide-react";
+import { Home, PlusCircle, Send, FileText, LogOut, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 
-// Accept onAddExpenseClick prop
-const Sidebar = ({ open, setOpen, onLinkClick, onAddExpenseClick }) => {
+const Sidebar = ({
+  open,
+  setOpen,
+  onLinkClick,
+  onAddExpenseClick,
+  onReportClick,
+}) => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
 
@@ -32,7 +29,6 @@ const Sidebar = ({ open, setOpen, onLinkClick, onAddExpenseClick }) => {
         ${open ? "translate-x-0" : "-translate-x-full"}
       `}
     >
-      {/* HEADER */}
       <div className="flex items-center justify-between px-4 h-16 border-b border-slate-800">
         <span className="ml-2 text-2xl font-bold bg-linear-to-r from-blue-300 to-purple-600 bg-clip-text text-transparent">
           FinBot
@@ -45,43 +41,41 @@ const Sidebar = ({ open, setOpen, onLinkClick, onAddExpenseClick }) => {
         </button>
       </div>
 
-      {/* MENU */}
       <nav className="p-3 space-y-1 text-slate-300">
         <MenuItem
           icon={<Home size={18} />}
           label="Home"
           onClick={() => navigate("/")}
         />
+
         <MenuItem
-          icon={<LayoutDashboard size={18} />}
-          label="Dashboard"
-          onClick={() => navigate("/dashboard")}
-        />
-        
-        {/* Update Add Expense MenuItem */}
-        <MenuItem 
-            icon={<PlusCircle size={18} />} 
-            label="Add Expense"
-            onClick={() => {
-                setOpen(false); // Close sidebar
-                onAddExpenseClick(); // Open Expense Drawer
-            }}
+          icon={<PlusCircle size={18} />}
+          label="Add Expense"
+          onClick={() => {
+            setOpen(false);
+            onAddExpenseClick();
+          }}
         />
 
-      
         <MenuItem
           icon={<Send size={18} />}
           label="Link TelegramBot"
           onClick={() => {
-            setOpen(false);   // sidebar close
-            onLinkClick();    // same drawer open for telegram linking
+            setOpen(false);
+            onLinkClick();
           }}
         />
 
-        <MenuItem icon={<FileText size={18} />} label="Reports" />
+        <MenuItem
+          icon={<FileText size={18} />}
+          label="Reports"
+          onClick={() => {
+            setOpen(false);
+            onReportClick();
+          }}
+        />
       </nav>
 
-      {/* USER CARD */}
       <div className="absolute bottom-4 left-0 w-full px-3">
         <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 space-y-2">
           <div className="px-3 py-2 rounded-lg border border-slate-800">

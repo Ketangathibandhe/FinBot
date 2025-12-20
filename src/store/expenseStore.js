@@ -52,5 +52,43 @@ export const useExpenseStore = create((set, get) => ({
     } catch (err) {
         alert("Failed to delete");
     }
+  },
+
+  //  Download PDF Report
+  downloadReport: async (month, year, token) => {
+    set({ loading: true });
+    try {
+      const res = await axios.get(`http://localhost:5000/api/reports/pdf?month=${month}&year=${year}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: 'blob', 
+      });
+
+      // Create a URL for the PDF blob
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      
+      // Create hidden link and click it
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `FinBot_Statement_${month}_${year}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      set({ loading: false });
+      return true; // Success
+
+    } catch (err) {
+      console.error("PDF Download Error:", err);
+      if(err.response && err.response.status === 404) {
+          alert("No expenses found for this month.");
+      } else {
+          alert("Failed to download PDF report.");
+      }
+      set({ loading: false });
+      return false;
+    }
   }
 }));

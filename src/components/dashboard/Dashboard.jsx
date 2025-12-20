@@ -3,9 +3,11 @@ import Sidebar from "./Sidebar";
 import TelegramAlert from "./TelegramAlert";
 import TelegramLinkDrawer from "./TelegramLinkDrawer";
 import AddExpenseDrawer from "./AddExpenseDrawer";
+import ReportDrawer from "./ReportDrawer"; 
 import { useAuthStore } from "../../store/authStore";
 import { useExpenseStore } from "../../store/expenseStore";
 import Aurora from "../ReactBits/Aurora";
+import { FileText } from "lucide-react"; 
 
 import StatsGrid from "./Widgets/StatsGrid";
 import SpendingChart from "./Widgets/SpendingChart";
@@ -16,6 +18,7 @@ const Dashboard = () => {
   const [open, setOpen] = useState(false);
   const [openTelegramDrawer, setOpenTelegramDrawer] = useState(false);
   const [openAddExpenseDrawer, setOpenAddExpenseDrawer] = useState(false);
+  const [openReportDrawer, setOpenReportDrawer] = useState(false);
 
   const { token, user } = useAuthStore();
   const { expenses, stats, fetchDashboardData, deleteExpense } = useExpenseStore();
@@ -49,6 +52,7 @@ const Dashboard = () => {
             setOpen={setOpen} 
             onLinkClick={() => setOpenTelegramDrawer(true)}
             onAddExpenseClick={() => setOpenAddExpenseDrawer(true)} 
+            onReportClick={() => setOpenReportDrawer(true)} 
         />
 
        
@@ -70,9 +74,25 @@ const Dashboard = () => {
                     </div>
                 </div>
                 
-                <button onClick={() => setOpenAddExpenseDrawer(true)} className="hidden sm:flex items-center gap-2 bg-white text-black px-5 py-2 rounded-full font-semibold text-sm hover:bg-gray-200 transition shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-                    + Add Expense
-                </button>
+                <div className="hidden sm:flex items-center gap-4">
+                    
+                    {/* Reports Button*/}
+                    <button 
+                        onClick={() => setOpenReportDrawer(true)}
+                        className="flex items-center gap-2 bg-white text-black px-5 py-2 rounded-full font-bold text-sm hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95"
+                    >
+                        <FileText size={18} className="text-black"/>
+                        Reports
+                    </button>
+
+                    {/* Add Expense Button */}
+                    <button 
+                        onClick={() => setOpenAddExpenseDrawer(true)} 
+                        className="flex items-center gap-2 bg-white text-black px-5 py-2 rounded-full font-bold text-sm hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95"
+                    >
+                        + Add Expense
+                    </button>
+                </div>
             </header>
 
             {/* TELEGRAM ALERT */}
@@ -100,6 +120,8 @@ const Dashboard = () => {
 
         <TelegramLinkDrawer open={openTelegramDrawer} onClose={() => setOpenTelegramDrawer(false)} />
         <AddExpenseDrawer open={openAddExpenseDrawer} onClose={() => { setOpenAddExpenseDrawer(false); fetchDashboardData(token); }} />
+        <ReportDrawer open={openReportDrawer} onClose={() => setOpenReportDrawer(false)} />
+        
         </div>
     </Aurora>
   );
