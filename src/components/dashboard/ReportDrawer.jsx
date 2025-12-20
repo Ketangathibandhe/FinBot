@@ -56,11 +56,11 @@ const ReportDrawer = ({ open, onClose }) => {
         bg-[#0F1219] border-t border-white/10 
         rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.6)] 
         transform transition-transform duration-300 ease-out 
-        ${open ? "translate-y-0" : "translate-y-full"}
+        ${open ? "translate-y-0" : "translate-y-[120%]"}
       `}
       >
         <div className="w-full flex justify-center pt-3 pb-1">
-          <div className="w-12 h-1.5 bg-gray-700/50 rounded-full"></div>
+          <div className="w-12 h-1.5 bg-linear-to-r from-blue-300 to-purple-500 rounded-full"></div>
         </div>
 
         <div className="p-6 pb-10 max-w-lg mx-auto">

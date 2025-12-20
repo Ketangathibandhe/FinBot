@@ -105,11 +105,11 @@ const AddExpenseDrawer = ({ open, onClose }) => {
         bg-[#0F1219] border-t border-white/10 
         rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.6)] 
         transform transition-transform duration-300 ease-out flex flex-col
-        ${open ? "translate-y-0 pointer-events-auto" : "translate-y-full pointer-events-none"}
+        ${open ? "translate-y-0 pointer-events-auto" : "translate-y-[120%] pointer-events-none"}
       `}>
 
         <div className="w-full flex justify-center pt-3 pb-1 shrink-0">
-            <div className="w-12 h-1.5 bg-gray-700/50 rounded-full"></div>
+            <div className="w-12 h-1.5 bg-linear-to-r from-blue-300 to-purple-500 rounded-full"></div>
         </div>
 
         <div className="flex items-center justify-between px-6 py-4 shrink-0">

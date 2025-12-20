@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import Aurora from "../components/ReactBits/Aurora";
 import arrowPng from "../assets/arrow.png";
 import { useAuthStore } from "../store/authStore";
+import HomeTelegramSection from "./HomeTelegramSection";
+import Footer from "./Footer";
 
 const Home = () => {
   //checks if user is loggedin or not
@@ -148,6 +150,8 @@ const Home = () => {
             </div>
           </section>
 
+          <HomeTelegramSection />
+
           {/* HOW IT WORKS section*/}
           <section id="how-it-works" className="py-8 sm:py-12">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -223,7 +227,6 @@ const Home = () => {
                 tracking expenses via chat or web.
               </p>
               <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
-              
                 <Link
                   to={isAuthenticated ? "/dashboard" : "/signup"}
                   className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white font-semibold shadow-md text-sm sm:text-base"
@@ -245,13 +248,7 @@ const Home = () => {
         </main>
 
         {/* Footer */}
-        <footer className="py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-slate-400">
-            <div className="mb-3 sm:mb-0 text-sm text-center">
-              © 2025 FinBot. Built with ❤️.
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </Aurora>
   );

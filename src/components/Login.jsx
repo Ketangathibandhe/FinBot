@@ -38,7 +38,7 @@ const Login = () => {
       navigate("/dashboard"); // jump to Dashboard
     } catch (error) {
       console.error("Login Error:", error);
-      toast.error(error.response?.data?.message || error.message || "Login failed!");
+      toast.error(error.response?.data?.message ||"Invalid Credential");
     } finally {
       setLoading(false);
     }
