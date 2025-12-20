@@ -37,7 +37,7 @@ bot.start(async (ctx) => {
     await user.save();
 
     ctx.reply(
-      `Account Linked Successfully!\nHello ${user.name}, I am ready.\n\nTry sending an expense: "100 Momos"`
+      `Account Linked Successfully!\nHello ${user.name}, I am ready.\n\nTry sending an expense: "spent 100 for petrol",\nOr if you want to download monthly expense report try /report command"`
     );
   } catch (err) {
     console.log("Bot Error:", err);
