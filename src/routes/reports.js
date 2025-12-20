@@ -1,0 +1,112 @@
+const express = require('express');
+const router = express.Router();
+const fs = require("fs"); 
+const PDFDocument = require("pdfkit-table"); 
+const Expense = require('../models/Expense');
+const { userAuth } = require('../middleware/auth');
+
+// Date Range 
+const getMonthDateRange = (year, month) => {
+    const start = new Date(year, month - 1, 1);
+    const end = new Date(year, month, 0, 23, 59, 59);
+    return { start, end };
+};
+
+//PDF DESIGN FUNCTION 
+const designPDF = async (doc, expenses, userName, period) => {
+    // Heading
+    doc.fontSize(20).text("FinBot Monthly Statement", { align: "center" });
+    doc.moveDown();
+    doc.fontSize(12).text(`Name: ${userName}`);
+    doc.text(`Period: ${period}`);
+    doc.moveDown();
+
+    // Table Data
+    const table = {
+        title: "Expense Details",
+        headers: ["Date", "Item", "Category", "Mode", "Amount"],
+        rows: expenses.map(item => [
+            new Date(item.date).toLocaleDateString('en-GB'),
+            item.title,
+            item.category,
+            item.mode,
+            `Rs. ${item.amount}`
+        ])
+    };
+
+    // Draw Table
+    await doc.table(table, {
+        width: 500,
+        prepareHeader: () => doc.font("Helvetica-Bold").fontSize(10),
+        prepareRow: (row, indexColumn, indexRow, rect, rectRow) => {
+            doc.font("Helvetica").fontSize(10);
+            indexColumn === 0 && doc.addBackground(rectRow, (indexRow % 2 ? 'white' : '#f2f2f2'), 0.15);
+        },
+    });
+
+    // Total
+    const total = expenses.reduce((sum, item) => sum + item.amount, 0);
+    doc.moveDown();
+    doc.font("Helvetica-Bold").fontSize(14).text(`Total Expense: Rs. ${total.toLocaleString()}`, { align: "right", color: "red" });
+};
+
+
+router.get("/pdf", userAuth, async (req, res) => {
+    try {
+        const { month, year } = req.query;
+        const userId = req.user._id;
+        const userName = req.user.name || "User";
+
+        if (!month || !year) return res.status(400).send("Month/Year required");
+
+        const { start, end } = getMonthDateRange(parseInt(year), parseInt(month));
+
+        const expenses = await Expense.find({ 
+            user: userId,
+            date: { $gte: start, $lte: end } 
+        }).sort({ date: 1 });
+
+        if (expenses.length === 0) return res.status(404).send("No data found");
+
+        const filename = `Statement_${month}_${year}.pdf`;
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
+
+        const doc = new PDFDocument({ margin: 30, size: 'A4' });
+        doc.pipe(res); 
+
+        await designPDF(doc, expenses, userName, `${month}/${year}`);
+        doc.end();
+
+    } catch (err) {
+        console.error(err);
+        if (!res.headersSent) res.status(500).send("Error generating PDF");
+    }
+});
+
+// BOT FUNCTION to Save File 
+const generateReportForBot = async (userId, userName, month, year) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const { start, end } = getMonthDateRange(year, month);
+            const expenses = await Expense.find({ user: userId, date: { $gte: start, $lte: end } }).sort({ date: 1 });
+
+            if (expenses.length === 0) return resolve(null);
+
+            const doc = new PDFDocument({ margin: 30, size: 'A4' });
+            const fileName = `Statement_${Date.now()}.pdf`; 
+            const stream = fs.createWriteStream(fileName);
+            doc.pipe(stream);
+
+            await designPDF(doc, expenses, userName, `${month}/${year}`);
+            doc.end();
+
+            stream.on("finish", () => resolve(fileName)); 
+            stream.on("error", (err) => reject(err));
+        } catch (err) {
+            reject(err);
+        }
+    });
+};
+
+module.exports = { router, generateReportForBot };

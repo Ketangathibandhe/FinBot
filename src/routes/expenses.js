@@ -1,24 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer'); // Used for file uploads
+const multer = require('multer'); 
 const Expense = require('../models/Expense');
 const { userAuth } = require('../middleware/auth');
 const { analyzeExpense } = require('../services/aiService'); 
 
-// Setup file upload (Saves file in memory temporarily)
+//Saves file in memory temporarily
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Get Start & End Date of Current Month 
 const getCurrentMonthRange = () => {
     const now = new Date();
-    // 1st day of current month (e.g., 1st Dec 00:00:00)
+     // 1st day of current month (e.g., 1st Dec 00:00:00)
     const start = new Date(now.getFullYear(), now.getMonth(), 1); 
     // Last day of current month (e.g., 31st Dec 23:59:59)
     const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59); 
     return { start, end };
 };
 
-// ADD EXPENSE API
+// ADD-EXPENSE API
 router.post("/add", userAuth, upload.single("receipt"), async (req, res) => {
     try {
         const { amount, title, category, date } = req.body;
@@ -29,13 +29,11 @@ router.post("/add", userAuth, upload.single("receipt"), async (req, res) => {
             console.log("Analyzing Receipt with AI...");
             const aiData = await analyzeExpense(null, req.file.buffer);
 
-            if (!aiData) {
+             if (!aiData) {
                 return res.status(400).send("AI failed to read receipt. Please try manual entry.");
             }
 
-            // Determine Mode: If AI detects 'Online', use it. Otherwise default to 'Cash'.
             const detectedMode = (aiData.mode && aiData.mode.toLowerCase() === 'online') ? 'Online' : 'Cash';
-
             expenseData = {
                 title: aiData.item || "Scanned Receipt",
                 amount: aiData.amount,
@@ -46,26 +44,19 @@ router.post("/add", userAuth, upload.single("receipt"), async (req, res) => {
         } 
         // Case B: Manual Entry
         else {
-            if (!amount || !title) {
-                return res.status(400).send("Please enter Amount and Title!");
-            }
+            if (!amount || !title) return res.status(400).send("Amount & Title required!");
             expenseData = {
                 title: title,
                 amount: parseFloat(amount),
                 category: category || "General",
-                mode: "Cash", // Default to Cash
+                mode: "Cash", // Default to Cash 
                 date: date ? new Date(date) : new Date()
             };
         }
-
         // Save to DB
         const newExpense = new Expense({
             user: req.user._id,        
-            title: expenseData.title,   
-            amount: expenseData.amount,  
-            category: expenseData.category,
-            mode: expenseData.mode,      
-            date: expenseData.date       
+            ...expenseData    
         });
 
         await newExpense.save();
@@ -77,15 +68,13 @@ router.post("/add", userAuth, upload.single("receipt"), async (req, res) => {
     }
 });
 
-// GET USER EXPENSES (Filtered by Current Month)
+//  GET USER EXPENSES (Current Month Only)
 router.get("/user-expenses", userAuth, async (req, res) => {
     try {
         const { start, end } = getCurrentMonthRange(); 
-        const userId = req.user._id;
         
-        // Find expenses for this user ONLY for current month
         const expenses = await Expense.find({ 
-            user: userId,
+            user: req.user._id,
             date: { $gte: start, $lte: end } 
         }).sort({ date: -1 });
         
@@ -98,17 +87,12 @@ router.get("/user-expenses", userAuth, async (req, res) => {
 // DELETE EXPENSE
 router.delete("/delete/:id", userAuth, async (req, res) => {
     try {
-        const expenseId = req.params.id;
-        const userId = req.user._id;
-
         const deletedExpense = await Expense.findOneAndDelete({
-            _id: expenseId,
-            user: userId
+            _id: req.params.id,
+            user: req.user._id
         });
 
-        if (!deletedExpense) {
-            return res.status(404).send("Expense not found or unauthorized!");
-        }
+        if (!deletedExpense) return res.status(404).send("Not found!");
 
         res.json({ message: "Expense Deleted Successfully!" });
     } catch (err) {
@@ -116,40 +100,31 @@ router.delete("/delete/:id", userAuth, async (req, res) => {
     }
 });
 
-// GET STATS (UPDATED FOR DASHBOARD)
+// GET STATS
 router.get("/stats", userAuth, async (req, res) => {
     try {
         const { start, end } = getCurrentMonthRange();
-        const userId = req.user._id;
-
-        // Category Stats (For Pie Chart)
-        const categoryStats = await Expense.aggregate([
-            { $match: { user: userId, date: { $gte: start, $lte: end } } },
-            { $group: { _id: "$category", total: { $sum: "$amount" } } }
+        const filter = { user: req.user._id, date: { $gte: start, $lte: end } };
+        
+        //Promise.all used so that all three querier runs in parallel
+        const [categoryStats, dailyStats, modeStats] = await Promise.all([
+            Expense.aggregate([
+                { $match: filter },
+                { $group: { _id: "$category", total: { $sum: "$amount" } } }
+            ]),
+            Expense.aggregate([
+                { $match: filter },
+                { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } }, total: { $sum: "$amount" } } },
+                { $sort: { _id: 1 } }
+            ]),
+            Expense.aggregate([
+                { $match: filter },
+                { $group: { _id: "$mode", total: { $sum: "$amount" } } }
+            ])
         ]);
 
-        // Daily Stats (For Area Graph)
-        const dailyStats = await Expense.aggregate([
-            { $match: { user: userId, date: { $gte: start, $lte: end } } },
-            { 
-                $group: { 
-                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } }, 
-                    total: { $sum: "$amount" } 
-                } 
-            },
-            { $sort: { _id: 1 } }
-        ]);
-
-        // Mode Stats (Cash vs Online)
-        const modeStats = await Expense.aggregate([
-            { $match: { user: userId, date: { $gte: start, $lte: end } } },
-            { $group: { _id: "$mode", total: { $sum: "$amount" } } }
-        ]);
-
-        // Total Amount Spent This Month
         const totalExpense = categoryStats.reduce((acc, curr) => acc + curr.total, 0);
 
-        // Sending all data
         res.json({ categoryStats, dailyStats, totalExpense, modeStats });
     } catch (err) {
         res.status(400).send(err.message);

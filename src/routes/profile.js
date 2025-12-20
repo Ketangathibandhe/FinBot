@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const { userAuth } = require('../middleware/auth'); //middleware
+const { userAuth } = require('../middleware/auth'); 
 
 
 // GET /view - to see user data
@@ -16,7 +16,7 @@ router.get("/view", userAuth, async (req, res) => {
 });
 
 
-// POST /generate-code - generating code to Link whatsApp
+// POST /generate-code - generating code to Link telegramBot
 router.post("/generate-code", userAuth, async (req, res) => {
   try {
     const user = req.user;

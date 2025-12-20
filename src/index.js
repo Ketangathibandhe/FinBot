@@ -29,10 +29,13 @@ app.get("/", (req, res) => {
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const expenseRouter = require("./routes/expenses");
+const reportRouter = require('./routes/reports');
+
 
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/expense", expenseRouter);
+app.use("/api/reports", reportRouter.router);
 
 connectDB()
   .then(() => {
