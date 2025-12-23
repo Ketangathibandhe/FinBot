@@ -6,7 +6,7 @@ const SpendingChart = ({ data }) => {
   return (
     <BentoCard className="xl:col-span-2 flex flex-col h-[400px] xl:h-auto">
         <h3 className="text-lg font-semibold text-white mb-6">Spending Activity</h3>
-        <div className="flex-1 w-full min-h-0">
+        <div className="flex-1 w-full min-h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
             <defs>

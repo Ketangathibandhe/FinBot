@@ -37,10 +37,12 @@ const StatsGrid = ({ stats, expensesCount }) => {
   const onlineTotal =
     stats.modeStats?.find((s) => s._id === "Online")?.total || 0;
 
-// dont change og data make a copy and then sort it 
-  const topCategory = stats.categoryStats?.length > 0 
-    ? [...stats.categoryStats].sort((a, b) => b.total - a.total)[0]._id 
-    : "-";
+  // dont change og data make a copy and then sort it 
+  const topCategory =
+    stats.categoryStats?.length > 0
+      ? [...stats.categoryStats]
+          .sort((a, b) => b.total - a.total)[0]._id
+      : "-";
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -66,9 +68,7 @@ const StatsGrid = ({ stats, expensesCount }) => {
       />
       <StatCard
         title="Top Category"
-        value={
-          stats.categoryStats.sort((a, b) => b.total - a.total)[0]?._id || "-"
-        }
+        value={topCategory}
         subValue="Most Active"
         icon={Layers}
         color="text-pink-400"

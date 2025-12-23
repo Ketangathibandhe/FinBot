@@ -147,7 +147,7 @@ const Dashboard = () => {
 
           <StatsGrid stats={stats} expensesCount={expenses.length} />
 
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-auto xl:h-[380px]">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 min-h-[400px]">
             <SpendingChart data={stats.dailyStats} />
             <CategoryChart
               data={stats.categoryStats}
