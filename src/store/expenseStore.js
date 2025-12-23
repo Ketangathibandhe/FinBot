@@ -15,10 +15,10 @@ export const useExpenseStore = create((set, get) => ({
     set({ loading: true });
     try {
       const [expensesRes, statsRes] = await Promise.all([
-        axios.get("http://localhost:5000/api/expense/user-expenses", {
+        axios.get(`${import.meta.env.VITE_API_URL}/expense/user-expenses`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:5000/api/expense/stats", {
+        axios.get(`${import.meta.env.VITE_API_URL}/expense/stats`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -37,7 +37,7 @@ export const useExpenseStore = create((set, get) => ({
   // Delete Action
   deleteExpense: async (id, token) => {
     try {
-        await axios.delete(`http://localhost:5000/api/expense/delete/${id}`, {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/expense/delete/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         
@@ -58,7 +58,7 @@ export const useExpenseStore = create((set, get) => ({
   downloadReport: async (month, year, token) => {
     set({ loading: true });
     try {
-      const res = await axios.get(`http://localhost:5000/api/reports/pdf?month=${month}&year=${year}`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/reports/pdf?month=${month}&year=${year}`, {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob', 
       });

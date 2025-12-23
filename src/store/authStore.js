@@ -29,7 +29,7 @@ export const useAuthStore = create(
           if (!currentToken) return;
 
           const res = await axios.get(
-            "http://localhost:5000/api/profile/view",
+            `${import.meta.env.VITE_API_URL}/profile/view`,
             { 
               withCredentials: true,
               headers: {

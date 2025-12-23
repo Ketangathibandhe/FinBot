@@ -67,7 +67,7 @@ const AddExpenseDrawer = ({ open, onClose }) => {
       if(selectedFile) formData.append("receipt", selectedFile);
 
       await axios.post(
-        "http://localhost:5000/api/expense/add", 
+        `${import.meta.env.VITE_API_URL}/expense/add`, 
         formData,
         {
           withCredentials: true,

@@ -55,7 +55,7 @@ const TelegramLinkDrawer = ({ open, onClose }) => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "http://localhost:5000/api/profile/generate-code",
+        `${import.meta.env.VITE_API_URL}/profile/generate-code`,
         {},
         {
           withCredentials: true,

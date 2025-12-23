@@ -23,7 +23,7 @@ const Signup = () => {
 
     try {
       // Signup API Call
-      await axios.post("http://localhost:5000/api/auth/signup", {
+      await axios.post(`${import.meta.env.VITE_API_URL}/auth/signup`, {
         name,
         email,
         password,
@@ -31,7 +31,7 @@ const Signup = () => {
 
       // Auto-Login API Call
       const loginRes = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${import.meta.env.VITE_API_URL}/auth/login`,
         { email, password }
       );
 
