@@ -37,17 +37,10 @@ const StatsGrid = ({ stats, expensesCount }) => {
   const onlineTotal =
     stats.modeStats?.find((s) => s._id === "Online")?.total || 0;
 
-  let topCategory = "-"; // Default value
-
-  // Check if  data is present or not
-  if (stats.categoryStats.length > 0) {
-    // make a copy so that Og data remains unchanged
-    const copyData = [...stats.categoryStats];
-
-    // Sort
-    copyData.sort((a, b) => b.total - a.total);
-    topCategory = copyData[0]._id;
-  }
+// dont change og data make a copy and then sort it 
+  const topCategory = stats.categoryStats?.length > 0 
+    ? [...stats.categoryStats].sort((a, b) => b.total - a.total)[0]._id 
+    : "-";
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
