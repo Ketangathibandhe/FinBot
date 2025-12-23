@@ -5,7 +5,7 @@ import Signup from "./components/Signup";
 import Dashboard from "./components/dashboard/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
-
+import ForgotPassword from "./components/ForgotPassword";
 function App() {
   return (
     <>
@@ -15,7 +15,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         {/*protected dashboard*/}
         <Route
           path="/dashboard"

@@ -37,7 +37,7 @@ const Sidebar = ({
           onClick={() => setOpen(false)}
           className="p-2 rounded-lg hover:bg-slate-800 transition"
         >
-          <X size={18} />
+          <X size={18} color="white"/>
         </button>
       </div>
 

@@ -83,10 +83,19 @@ const Login = () => {
                 placeholder="you@example.com"
               />
             </div>
+            
             <div>
-              <label className="block text-slate-300 text-sm font-medium mb-2">
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-slate-300 text-sm font-medium">
+                  Password
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -123,6 +132,7 @@ const Login = () => {
                 </button>
               </div>
             </div>
+
             <button
               type="submit"
               disabled={loading}
