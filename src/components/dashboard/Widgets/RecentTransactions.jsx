@@ -3,6 +3,10 @@ import { Trash2 } from "lucide-react";
 import { BentoCard, getCategoryStyle } from './DashboardUI';
 
 const RecentTransactions = ({ expenses, onDelete, token }) => {
+  
+  //create a copy of array first , the according to data sort for newest first
+  const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+
   return (
     <BentoCard className="h-[450px]"> 
         <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
@@ -11,12 +15,13 @@ const RecentTransactions = ({ expenses, onDelete, token }) => {
         </div>
         
         <div className="overflow-y-auto pr-2 custom-scrollbar space-y-2 h-[340px] w-full">
-            {expenses.length === 0 ? (
+            {sortedExpenses.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-gray-500 space-y-2">
                     <p>No transactions found.</p>
                 </div>
             ) : (
-                expenses.map((expense) => {
+               
+                sortedExpenses.map((expense) => {
                     const catStyle = getCategoryStyle(expense.category);
                     
                     return (
