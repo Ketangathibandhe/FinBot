@@ -21,9 +21,15 @@ const Login = () => {
     setLoading(true);
 
     try {
+
+      // Mobile keyboards often add spaces or capitalize first letter.
+      // We fix this before sending to backend.
+      const cleanEmail = email.toLowerCase().trim();
+      const cleanPassword = password.trim(); 
+
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, {
-        email,
-        password,
+        email: cleanEmail,
+        password: cleanPassword,
       });
 
       // checks if the token is present in the res or not
@@ -38,7 +44,7 @@ const Login = () => {
       navigate("/dashboard"); // jump to Dashboard
     } catch (error) {
       console.error("Login Error:", error);
-      toast.error(error.response?.data?.message ||"Invalid Credential");
+      toast.error(error.response?.data?.message || "Invalid Credential");
     } finally {
       setLoading(false);
     }
@@ -81,6 +87,12 @@ const Login = () => {
                 required
                 className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"
                 placeholder="you@example.com"
+                
+                // MOBILE KEYBOARD HANDLING
+                autoCapitalize="none"
+                autoCorrect="off"
+                autoComplete="email"
+                spellCheck="false"
               />
             </div>
             
@@ -104,6 +116,10 @@ const Login = () => {
                   required
                   className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition pr-10"
                   placeholder="••••••••"
+
+                  //MOBILE KEYBOARD HANDLING (Password)
+                  autoCapitalize="none"
+                  autoCorrect="off"
                 />
                 <button
                   type="button"
