@@ -10,11 +10,12 @@ const PORT = process.env.PORT || 5000;
 
 const bot = require("./bot/telegramBot");
 
-
 app.use(
   cors({
-    origin: ["http://localhost:5173","https://finbot-f9cb.onrender.com/"],
+    origin: ["http://localhost:5173", "https://finbot-f9cb.onrender.com/"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
 
@@ -29,8 +30,7 @@ app.get("/", (req, res) => {
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const expenseRouter = require("./routes/expenses");
-const reportRouter = require('./routes/reports');
-
+const reportRouter = require("./routes/reports");
 
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
