@@ -1,20 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { BentoCard, CustomTooltip, getCategoryStyle } from "./DashboardUI";
 
 const CategoryChart = ({ data, total }) => {
-  //  animation control 
-  const [allowAnimation, setAllowAnimation] = useState(true);
-
-  //off animation after 2 sec
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setAllowAnimation(false);
-    }, 2000); 
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <BentoCard className="flex flex-col h-[420px] xl:h-auto relative min-h-[400px]">
       <h3 className="text-lg font-semibold text-white mb-1 shrink-0">
@@ -36,7 +24,6 @@ const CategoryChart = ({ data, total }) => {
                   dataKey="total"
                   nameKey="_id"
                   stroke="none"
-                  isAnimationActive={allowAnimation}
                 >
                   {data.map((entry, index) => {
                     const styles = getCategoryStyle(entry._id);
