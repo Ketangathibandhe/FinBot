@@ -1,10 +1,28 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const sortList = (list) => {
-  if (!Array.isArray(list)) return [];
-  return [...list].sort((a, b) => (a._id || "").toString().localeCompare((b._id || "").toString()));
+
+const isDeepEqual = (obj1, obj2) => {
+  if (obj1 === obj2) return true;
+  
+  if (typeof obj1 !== "object" || obj1 === null || typeof obj2 !== "object" || obj2 === null) {
+    return false;
+  }
+
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) return false;
+
+  for (let key of keys1) {
+    if (!keys2.includes(key) || !isDeepEqual(obj1[key], obj2[key])) {
+      return false;
+    }
+  }
+
+  return true;
 };
+
 export const useExpenseStore = create((set, get) => ({
   expenses: [],
   stats: {
@@ -16,10 +34,11 @@ export const useExpenseStore = create((set, get) => ({
 
   // Fetch Data (Expenses + Stats)
   fetchDashboardData: async (token, isBackground = false) => {
-    // if bg is not refresh then only show loading 
+    // Sirf tab loading dikhao jab user ne refresh kiya ho, background mein nahi
     if (!isBackground) {
       set({ loading: true });
     }
+    
     try {
       const [expensesRes, statsRes] = await Promise.all([
         axios.get(`${import.meta.env.VITE_API_URL}/expense/user-expenses`, {
@@ -30,46 +49,29 @@ export const useExpenseStore = create((set, get) => ({
         }),
       ]);
 
-      // New Data received from Server
       const newExpenses = expensesRes.data.data;
       const newStats = statsRes.data;
 
-      // Current Data in Store
       const currentExpenses = get().expenses;
       const currentStats = get().stats;
 
-      // Sort data before comparing (Important Fix for flicker)
-      const sortedNewExpenses = sortList(newExpenses);
-      const sortedCurrentExpenses = sortList(currentExpenses);
-      
-      const sortedNewStats = {
-        ...newStats,
-        categoryStats: sortList(newStats.categoryStats),
-        dailyStats: sortList(newStats.dailyStats),
-      };
-      const sortedCurrentStats = {
-        ...currentStats,
-        categoryStats: sortList(currentStats.categoryStats),
-        dailyStats: sortList(currentStats.dailyStats),
-      };
+      //  Compare 
+      const isExpensesSame = isDeepEqual(newExpenses, currentExpenses);
+      const isStatsSame = isDeepEqual(newStats, currentStats);
 
-      //Compare Strings to see if data changed
-      const isDataSame = 
-        JSON.stringify(sortedNewExpenses) === JSON.stringify(sortedCurrentExpenses) &&
-        JSON.stringify(sortedNewStats) === JSON.stringify(sortedCurrentStats);
-
-      // If data is exactly same, STOP here 
-      if (isDataSame) {
-        if (!isBackground) set({ loading: false }); 
+      //id data is same then stop here omly and dont update store
+      if (isExpensesSame && isStatsSame) {
+        if (!isBackground) set({ loading: false });
         return; 
       }
 
-      // Update only if data is different
+    //if data is changes then only update
       set({
         expenses: newExpenses,
         stats: newStats,
         loading: false,
       });
+
     } catch (err) {
       console.error("Dashboard Error:", err);
       set({ loading: false });
@@ -83,20 +85,20 @@ export const useExpenseStore = create((set, get) => ({
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // UI Update 
+      // Optimistic UI Update (Turant delete dikhao)
       set((state) => ({
         expenses: state.expenses.filter((e) => e._id !== id),
       }));
 
-      // refresh stats
-      get().fetchDashboardData(token);
+      // Background mein fresh data lao
+      get().fetchDashboardData(token, true);
 
     } catch (err) {
       alert("Failed to delete");
     }
   },
 
-  //  Download PDF Report
+  // Download PDF Report
   downloadReport: async (month, year, token) => {
     set({ loading: true });
     try {
@@ -105,30 +107,21 @@ export const useExpenseStore = create((set, get) => ({
         responseType: 'blob',
       });
 
-      // Create a URL for the PDF blob
       const url = window.URL.createObjectURL(new Blob([res.data]));
-
-      // Create hidden link and click it
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", `FinBot_Statement_${month}_${year}.pdf`);
       document.body.appendChild(link);
       link.click();
-
-      // Cleanup
+      
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
 
       set({ loading: false });
-      return true; // Success
+      return true;
 
     } catch (err) {
       console.error("PDF Download Error:", err);
-      if (err.response && err.response.status === 404) {
-        alert("No expenses found for this month.");
-      } else {
-        alert("Failed to download PDF report.");
-      }
       set({ loading: false });
       return false;
     }
