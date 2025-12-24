@@ -57,7 +57,7 @@ const ForgotPassword = () => {
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/auth/forgot-password`, {
         email,
-      });
+      },{ withCredentials: true });
       toast.success("OTP sent to your Telegram Bot! ");
       setStep(2); //next step
     } catch (error) {

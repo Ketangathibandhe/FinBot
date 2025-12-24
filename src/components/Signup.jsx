@@ -32,7 +32,7 @@ const Signup = () => {
       // Auto-Login API Call
       const loginRes = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/login`,
-        { email, password }
+        { email, password },{ withCredentials: true }
       );
 
       //  Check if token exists before saving

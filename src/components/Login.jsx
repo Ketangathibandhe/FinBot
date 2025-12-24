@@ -30,7 +30,7 @@ const Login = () => {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, {
         email: cleanEmail,
         password: cleanPassword,
-      });
+      },{ withCredentials: true });
 
       // checks if the token is present in the res or not
       if (!res.data.token) {
