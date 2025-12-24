@@ -7,8 +7,8 @@ const axios = require('axios');
 
 const cookieOptions = {
   httpOnly: true,
-  secure: false, //for localhost
-  sameSite: "lax",
+  secure: true,
+  sameSite: "none",
   path: "/",
   maxAge: 30 * 24 * 60 * 60 * 1000,
 };
