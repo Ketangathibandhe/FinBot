@@ -1,6 +1,10 @@
 import { create } from "zustand";
 import axios from "axios";
 
+const sortList = (list) => {
+  if (!Array.isArray(list)) return [];
+  return [...list].sort((a, b) => (a._id || "").toString().localeCompare((b._id || "").toString()));
+};
 export const useExpenseStore = create((set, get) => ({
   expenses: [],
   stats: {
@@ -34,10 +38,25 @@ export const useExpenseStore = create((set, get) => ({
       const currentExpenses = get().expenses;
       const currentStats = get().stats;
 
+      // Sort data before comparing (Important Fix for flicker)
+      const sortedNewExpenses = sortList(newExpenses);
+      const sortedCurrentExpenses = sortList(currentExpenses);
+      
+      const sortedNewStats = {
+        ...newStats,
+        categoryStats: sortList(newStats.categoryStats),
+        dailyStats: sortList(newStats.dailyStats),
+      };
+      const sortedCurrentStats = {
+        ...currentStats,
+        categoryStats: sortList(currentStats.categoryStats),
+        dailyStats: sortList(currentStats.dailyStats),
+      };
+
       //Compare Strings to see if data changed
       const isDataSame = 
-        JSON.stringify(newExpenses) === JSON.stringify(currentExpenses) &&
-        JSON.stringify(newStats) === JSON.stringify(currentStats);
+        JSON.stringify(sortedNewExpenses) === JSON.stringify(sortedCurrentExpenses) &&
+        JSON.stringify(sortedNewStats) === JSON.stringify(sortedCurrentStats);
 
       // If data is exactly same, STOP here 
       if (isDataSame) {
