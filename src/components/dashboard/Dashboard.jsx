@@ -34,9 +34,13 @@ const Dashboard = () => {
   //POLLING (Auto-Refresh every 5 seconds)
   useEffect(() => {
     if (!token) return;
+
+    // Initial fetch (with Normal loading)
+    fetchDashboardData(token, false);
+
     const interval = setInterval(() => {
-      fetchDashboardData(token);
-    }, 5000); // auto refresh the dashboard after every 5 sec
+      fetchDashboardData(token,true);
+    }, 10000); // auto refresh the dashboard after every 10 sec
 
     return () => clearInterval(interval); // Cleanup on unmount
   }, [token, fetchDashboardData]);

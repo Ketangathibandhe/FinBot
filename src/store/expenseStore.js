@@ -11,8 +11,11 @@ export const useExpenseStore = create((set, get) => ({
   loading: false,
 
   // Fetch Data (Expenses + Stats)
-  fetchDashboardData: async (token) => {
-    set({ loading: true });
+  fetchDashboardData: async (token ,isBackground = false) => {
+    // if bg is not refresh then only show loading 
+    if (!isBackground) {
+        set({ loading: true });
+    }
     try {
       const [expensesRes, statsRes] = await Promise.all([
         axios.get(`${import.meta.env.VITE_API_URL}/expense/user-expenses`, {
