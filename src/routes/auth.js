@@ -35,7 +35,11 @@ authRouter.post("/signup", async (req, res) => {
 authRouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+
+    const cleanEmail = email ? email.toLowerCase().trim() : "";
+
+    // Search with Clean Email
+    const user = await User.findOne({ email: cleanEmail });
 
     if (!user) throw new Error("Invalid credentials");
 
@@ -46,10 +50,9 @@ authRouter.post("/login", async (req, res) => {
 
     res.cookie("token", token, cookieOptions);
 
-    // same force token in response
     res.json({ message: "Logged in!", user: user, token: token });
   } catch (error) {
-    res.status(400).send("Login failed: " + error.message);
+    res.status(400).json({ message: "Login failed: " + error.message });
   }
 });
 
