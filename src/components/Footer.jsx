@@ -15,7 +15,7 @@ const Footer = () => {
           </div>
 
           <p className="text-sm text-gray-500 font-medium">
-            © 2025 FinBot. All rights reserved.
+            © 2025 FinBot. Designed & Developed by Ketan.
           </p>
 
           {/* Links */}
