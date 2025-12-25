@@ -22,17 +22,20 @@ const Signup = () => {
     setLoading(true);
 
     try {
+      const cleanEmail = email.toLowerCase().trim();
+      const cleanPassword = password.trim();
+
       // Signup API Call
       await axios.post(`${import.meta.env.VITE_API_URL}/auth/signup`, {
         name,
-        email,
-        password,
+        email: cleanEmail, 
+        password: cleanPassword, 
       });
 
       // Auto-Login API Call
       const loginRes = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/login`,
-        { email, password },{ withCredentials: true }
+        { email: cleanEmail, password: cleanPassword }, { withCredentials: true }
       );
 
       //  Check if token exists before saving
@@ -47,7 +50,11 @@ const Signup = () => {
       navigate("/dashboard"); // jump to Dashboard
     } catch (error) {
        console.error("Signup Error:", error);
-      toast.error(error.response?.data?.message || "Signup failed!");
+       
+  
+       const errorMsg = error.response?.data?.message || error.response?.data || "Signup failed!";
+       
+       toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -105,6 +112,10 @@ const Signup = () => {
                 required
                 className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"
                 placeholder="you@example.com"
+                
+                autoCapitalize="none"
+                autoCorrect="off"
+                autoComplete="email"
               />
             </div>
             <div>
@@ -119,6 +130,8 @@ const Signup = () => {
                   required
                   className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition pr-10"
                   placeholder="••••••••"
+                  autoCapitalize="none"
+                  autoCorrect="off"
                 />
                 <button
                   type="button"
