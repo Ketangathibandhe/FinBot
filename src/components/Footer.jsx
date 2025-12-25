@@ -24,7 +24,7 @@ const Footer = () => {
             <a
               href="https://github.com/Ketangathibandhe"
               target="_blank"
-              className="text-gray-400 hover:text-gray-900 transition-colors duration-200"
+              className="text-gray-500 hover:text-gray-900 transition-colors duration-200"
               aria-label="GitHub"
             >
               <Github size={20} />
@@ -34,7 +34,7 @@ const Footer = () => {
             <a
               href="https://www.linkedin.com/in/ketangathibandhe/"
               target="_blank"
-              className="text-gray-400 hover:text-blue-700 transition-colors duration-200"
+              className="text-gray-500 hover:text-blue-700 transition-colors duration-200"
               aria-label="LinkedIn"
             >
               <Linkedin size={20} />
@@ -43,7 +43,7 @@ const Footer = () => {
             {/* Gmail */}
             <a
               href="mailto:ketangathibandhe04@gmail.com"
-              className="text-gray-400 hover:text-red-500 transition-colors duration-200"
+              className="text-gray-500 hover:text-red-500 transition-colors duration-200"
               aria-label="Email"
             >
               <Mail size={20} />

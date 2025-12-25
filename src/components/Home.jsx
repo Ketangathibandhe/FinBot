@@ -12,10 +12,11 @@ const Home = () => {
 
   return (
     <Aurora
-      colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
+      colorStops={["#3A29FF", "#FF94B4", "#96230c"]}
       amplitude={1.4}
       blend={1}
       speed={1}
+      opacity={0.1}
     >
       {/* Grid*/}
       <div
@@ -37,7 +38,7 @@ const Home = () => {
         <nav className="w-full">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl md:text-6xl md:ml-14 font-bold bg-gradient-to-r from-blue-100 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-3xl md:text-6xl md:ml-14 font-bold bg-linear-to-r from-blue-100 to-purple-400 bg-clip-text text-transparent">
                 FinBot
               </h1>
             </div>
@@ -160,7 +161,7 @@ const Home = () => {
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl/20 shadow-purple-400">
                   <h4 className="font-semibold">1. Sign up & Link</h4>
                   <p className="text-slate-400 mt-2 text-sm">
                     Sign up on the web, get a unique linking code, send it to
@@ -168,7 +169,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl/20 shadow-purple-400">
                   <h4 className="font-semibold">
                     2. Add expenses (Telegram / Web)
                   </h4>
@@ -179,7 +180,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl/20 shadow-purple-400">
                   <h4 className="font-semibold">3. Smart AI parsing</h4>
                   <p className="text-slate-400 mt-2 text-sm">
                     Integrated Gemini OCR understands multiple languages
@@ -190,7 +191,7 @@ const Home = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl/20 shadow-purple-400">
                   <h4 className="font-semibold">4. Edit & Undo</h4>
                   <p className="text-slate-400 mt-2 text-sm">
                     Mistakes? Delete or edit any transaction via bot commands or
@@ -198,7 +199,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl/20 shadow-purple-400">
                   <h4 className="font-semibold">5. Monthly PDF Statements</h4>
                   <p className="text-slate-400 mt-2 text-sm">
                     Download bank-style monthly statements (PDF) with category
@@ -206,7 +207,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl shadow-purple-400">
+                <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 hover:shadow-xl/20 shadow-purple-400">
                   <h4 className="font-semibold">6. Analytics & Goals</h4>
                   <p className="text-slate-400 mt-2 text-sm">
                     Visual dashboards, spending trends, top categories, and
@@ -218,7 +219,7 @@ const Home = () => {
           </section>
 
           <section className="py-8 sm:py-12">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center bg-slate-900/40 p-6 sm:p-8 rounded-2xl border-2 border-purple-600 hover:shadow-2xl shadow-purple-400">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center bg-slate-900/40 p-6 sm:p-8 rounded-2xl border-2 border-purple-600 hover:shadow-xl/20 shadow-purple-400">
               <h4 className="text-lg sm:text-xl font-bold">
                 Ready to simplify your finances?
               </h4>
