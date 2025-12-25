@@ -12,7 +12,12 @@ const bot = require("./bot/telegramBot");
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://finbot-f9cb.onrender.com"],
+    origin: [
+      "http://localhost:5173",
+      "https://finbot-f9cb.onrender.com",
+      "https://fin-bot.dev",
+      "https://www.fin-bot.dev",
+    ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
