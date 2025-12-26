@@ -4,11 +4,16 @@ const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const { connectDB } = require("./config/database");
 
+
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 const bot = require("./bot/telegramBot");
+
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
 
 app.use(
   cors({
