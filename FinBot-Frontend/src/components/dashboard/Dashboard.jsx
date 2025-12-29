@@ -36,10 +36,14 @@ const Dashboard = () => {
   //SOCKET.IO LOGIC (Replaces Polling)
   useEffect(() => {
     if (!token|| !user) return;
-
+   const SOCKET_URL = import.meta.env.VITE_API_URL.replace('/api', '');
     // Connect to Backend
-    const socket = io(import.meta.env.VITE_API_URL, {
+
+    const socket = io(SOCKET_URL, {
         withCredentials: true,
+        transports: ["websocket"], // this is imp for render
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
     });
 
     // join room
