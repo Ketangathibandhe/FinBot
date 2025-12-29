@@ -16,6 +16,8 @@ import RecentTransactions from "./Widgets/RecentTransactions";
 
 import Footer from "../Footer";
 
+import{io} from "socket.io-client";
+
 const Dashboard = () => {
   const [open, setOpen] = useState(false);
   const [openTelegramDrawer, setOpenTelegramDrawer] = useState(false);
@@ -31,19 +33,34 @@ const Dashboard = () => {
     if (token) fetchDashboardData(token);
   }, [token]);
 
-  //POLLING (Auto-Refresh every 5 seconds)
+  //SOCKET.IO LOGIC (Replaces Polling)
   useEffect(() => {
-    if (!token) return;
+    if (!token|| !user) return;
 
-    // Initial fetch (with Normal loading)
-    fetchDashboardData(token, false);
+    // Connect to Backend
+    const socket = io(import.meta.env.VITE_API_URL, {
+        withCredentials: true,
+    });
 
-    const interval = setInterval(() => {
-      fetchDashboardData(token,true);
-    }, 10000); // auto refresh the dashboard after every 10 sec
+    // join room
+    socket.on("connect", () => {
+        console.log("Socket Connected:", socket.id);
+        socket.emit("join-room", user._id); // Join room with User ID
+    });
+    //listen when backend says expense-updated
+    socket.on("expense-updated", () => {
+        console.log("Real-time update received!");
+        // 'true' flag ensures loading spinner doesn't show (background refresh)
+        fetchDashboardData(token, true);
+    });
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [token, fetchDashboardData]);
+    // User Linked update (green dot in sidebar for linked status)
+    socket.on("user-linked", () => {
+        window.location.reload(); 
+    });
+    
+    return () => {socket.disconnect();} // Cleanup on unmount
+  }, [token, user,fetchDashboardData]);
 
   const currentMonthYear = new Date().toLocaleString("default", {
     month: "long",

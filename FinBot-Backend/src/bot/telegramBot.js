@@ -7,9 +7,11 @@ const { analyzeExpense } = require("../services/aiService");
 const fs = require("fs");
 const { generateReport } = require("../services/pdfService");
 
+
+//Wrap everything in a function that accepts 'io'
+module.exports = (io)=>{
 // Token form .env
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
-
 // linking logic (/start 123456)
 bot.start(async (ctx) => {
   try {
@@ -35,6 +37,9 @@ bot.start(async (ctx) => {
     user.telegramChatId = ctx.chat.id.toString();
     user.verificationCode = null; // delete code(One-time use)
     await user.save();
+
+    //Notify frontend that user is linked
+    io.to(user._id.toString()).emit("user-linked");
 
     ctx.reply(
       `Account Linked Successfully!\nHello ${user.name}, I am ready.\n\nTry sending an expense: "spent 100 for petrol",\nOr if you want to download monthly expense report try /report command"`
@@ -128,6 +133,8 @@ bot.on("text", async (ctx) => {
       mode: expenseData.mode,
     });
 
+    io.to(user._id.toString()).emit("expense-updated");
+
     const replyText = `Expense Added!\nItem: ${expenseData.item}\nAmount: ${expenseData.amount}\nCategory: ${expenseData.category}\nMode: ${expenseData.mode}`;
 
     //edit processing message and show final result
@@ -191,6 +198,9 @@ bot.on("photo", async (ctx) => {
       category: expenseData.category || "General",
       mode: expenseData.mode || "Unknown",
     });
+    
+    //Emit event to specific User Room
+    io.to(user._id.toString()).emit("expense-updated");
 
     const replyText = `Bill Scanned!\nItem: ${savedExpense.title}\nAmount: ₹${savedExpense.amount}\nCategory: ${savedExpense.category}\nMode: ${savedExpense.mode}`;
 
@@ -224,7 +234,16 @@ bot.on("callback_query", async (ctx) => {
       const expenseId = data.split("_")[1];
 
       // delete from DB
-      await Expense.findByIdAndDelete(expenseId);
+      const deletedExpense = await Expense.findByIdAndDelete(expenseId);
+
+      // Emit update after delete
+        // Optimization: we are not sending user id in query, but we can query DB
+        const chatId = ctx.callbackQuery.message.chat.id.toString();
+        const user = await User.findOne({ telegramChatId: chatId });
+        
+        if(user) {
+            io.to(user._id.toString()).emit("expense-updated");
+        }
 
       await ctx.answerCbQuery("Expense Deleted!");
 
@@ -237,6 +256,5 @@ bot.on("callback_query", async (ctx) => {
   }
 });
 
-
-
-module.exports = bot;
+return bot;
+}

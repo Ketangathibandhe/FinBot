@@ -21,6 +21,7 @@
     "react-is": "^19.2.3",
     "react-router-dom": "^7.10.1",
     "recharts": "^3.6.0",
+    "socket.io-client": "^4.8.3",
     "zustand": "^5.0.9"
   },
   "devDependencies": {
