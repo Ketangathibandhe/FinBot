@@ -20,9 +20,9 @@ const io = new Server(server,{
   cors:{
     origin: [
       "http://localhost:5173",
-      "https://finbot-f9cb.onrender.com",
       "https://fin-bot.dev",
       "https://www.fin-bot.dev",
+      "https://finbot-f9cb.onrender.com",
     ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -39,9 +39,9 @@ app.use(
   cors({
     origin:[
       "http://localhost:5173",
-      "https://finbot-f9cb.onrender.com",
       "https://fin-bot.dev",
       "https://www.fin-bot.dev",
+      "https://finbot-f9cb.onrender.com",
     ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
