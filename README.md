@@ -81,45 +81,45 @@ FinBot employs a **modern full-stack architecture** with real-time communication
 ### System Components
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        CLIENT LAYER                              │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  React Frontend (Vercel/Render)                          │  │
-│  │  - React Components  - Recharts Visualizations           │  │
-│  │  - Real-time Updates - Socket.IO Client                  │  │
-│  │  - Zustand State Management                              │  │
-│  └──────────────────────────────────────────────────────────┘  │
+│                        CLIENT LAYER                             │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  React Frontend (Vercel/Render)                          │   │
+│  │  - React Components  - Recharts Visualizations           │   │
+│  │  - Real-time Updates - Socket.IO Client                  │   │
+│  │  - Zustand State Management                              │   │
+│  └──────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
                               ↕ HTTPS / WebSocket
 ┌─────────────────────────────────────────────────────────────────┐
-│                     APPLICATION LAYER                            │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  Express API Server (Render)                             │  │
-│  │  - REST Endpoints    - JWT Authentication                │  │
-│  │  - Socket.IO Server  - Session Management                │  │
-│  │  - Telegram Bot      - File Upload Handling              │  │
-│  │  - PDF Generation    - Email Notifications               │  │
-│  └──────────────────────────────────────────────────────────┘  │
+│                     APPLICATION LAYER                           │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Express API Server (Render)                             │   │
+│  │  - REST Endpoints    - JWT Authentication                │   │
+│  │  - Socket.IO Server  - Session Management                │   │
+│  │  - Telegram Bot      - File Upload Handling              │   │
+│  │  - PDF Generation    - Email Notifications               │   │
+│  └──────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
                               ↕ API Calls
 ┌─────────────────────────────────────────────────────────────────┐
-│                      AI ANALYSIS LAYER                           │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  Google Gemini API                                       │  │
-│  │  - Receipt OCR                                           │  │
-│  │  - Text Understanding                                    │  │
-│  │  - Category Classification                               │  │
-│  │  - Amount Extraction                                     │  │
-│  └──────────────────────────────────────────────────────────┘  │
+│                      AI ANALYSIS LAYER                          │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Google Gemini API                                       │   │
+│  │  - Receipt OCR                                           │   │
+│  │  - Text Understanding                                    │   │
+│  │  - Category Classification                               │   │
+│  │  - Amount Extraction                                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
                               ↕
 ┌─────────────────────────────────────────────────────────────────┐
-│                       DATA LAYER                                 │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌────────────────┐ │
-│  │  MongoDB        │  │  Telegram API   │  │  Nodemailer    │ │
-│  │  - User Data    │  │  - Bot Messages │  │  - Email OTP   │ │
-│  │  - Expenses     │  │  - File Uploads │  │  - Alerts      │ │
-│  │  - Analytics    │  │  - Notifications│  │                │ │
-│  └─────────────────┘  └─────────────────┘  └────────────────┘ │
+│                           DATA LAYER                            |
+│           ┌─────────────────┐  ┌─────────────────┐              │
+│           │  MongoDB        │  │  Telegram API   │              │
+│           │  - User Data    │  │  - Bot Messages │              │
+│           │  - Expenses     │  │  - File Uploads │              │
+│           │  - Analytics    │  │  - Notifications│              │
+│           └─────────────────┘  └─────────────────┘              │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -175,7 +175,6 @@ FinBot employs a **modern full-stack architecture** with real-time communication
 | **Socket.io** | WebSocket server |
 | **JWT** | Authentication tokens |
 | **Bcrypt** | Password hashing |
-| **Nodemailer** | Email notifications |
 | **Axios** | HTTP requests to external APIs |
 | **PDFKit-Table** | PDF report generation |
 | **Multer** | File upload handling |
