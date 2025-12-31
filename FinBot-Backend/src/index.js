@@ -21,8 +21,7 @@ const io = new Server(server,{
     origin: [
       "http://localhost:5173",
       "https://fin-bot.dev",
-      "https://www.fin-bot.dev",
-      "https://finbot-f9cb.onrender.com",
+      "https://www.fin-bot.dev"
     ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -41,14 +40,13 @@ app.use(
       "http://localhost:5173",
       "https://fin-bot.dev",
       "https://www.fin-bot.dev",
-      "https://finbot-f9cb.onrender.com",
     ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 )
-app.options('*', cors()); //Force Pre-flight handling
+
 app.use(express.json());
 app.use(cookieParser());
 
