@@ -48,7 +48,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 )
-
+app.options('*', cors()); //Force Pre-flight handling
 app.use(express.json());
 app.use(cookieParser());
 
