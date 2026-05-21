@@ -15,7 +15,7 @@ const Footer = () => {
           </div>
 
           <p className="text-sm text-gray-500 font-medium">
-            © 2025 FinBot. Designed & Developed by Ketan.
+            © {new Date().getFullYear()} FinBot. Designed & Developed by Ketan.
           </p>
 
           {/* Links */}
@@ -24,6 +24,7 @@ const Footer = () => {
             <a
               href="https://github.com/Ketangathibandhe"
               target="_blank"
+              rel="noopener noreferrer"
               className="text-gray-500 hover:text-gray-900 transition-colors duration-200"
               aria-label="GitHub"
             >
@@ -34,6 +35,7 @@ const Footer = () => {
             <a
               href="https://www.linkedin.com/in/ketangathibandhe/"
               target="_blank"
+              rel="noopener noreferrer"
               className="text-gray-500 hover:text-blue-700 transition-colors duration-200"
               aria-label="LinkedIn"
             >

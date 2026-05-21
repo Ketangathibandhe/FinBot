@@ -32,4 +32,8 @@ const expenseSchema = new mongoose.Schema({
   },
 });
 
+//  Indexes for Performance 
+expenseSchema.index({ user: 1, date: -1 }); // Primary query pattern (user expenses by date)
+expenseSchema.index({ user: 1, category: 1 }); // Category aggregation queries
+
 module.exports = mongoose.model("Expense", expenseSchema);

@@ -2,11 +2,11 @@ const validator = require("validator");
 const validateSignUpData = (req) => {
   const { name, email, password } = req.body;
   if (!name) {
-    throw new Error("Enter valid user Name!");
+    throw new Error("Please enter a valid name");
   } else if (!validator.isEmail(email)) {
-    throw new Error("Plz Enter A Valid emali Id!");
+    throw new Error("Please enter a valid email address");
   } else if (!validator.isStrongPassword(password)) {
-    throw new Error("Enter a strong password");
+    throw new Error("Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 symbol");
   }
 };
 

@@ -4,8 +4,10 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Dashboard from "./components/dashboard/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NotFound from "./components/NotFound";
 import { Toaster } from "react-hot-toast";
 import ForgotPassword from "./components/ForgotPassword";
+
 function App() {
   return (
     <>
@@ -25,6 +27,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {/* 404 catch-all */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

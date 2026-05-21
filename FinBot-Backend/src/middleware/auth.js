@@ -3,7 +3,7 @@ const User = require('../models/User');
 
 const userAuth = async (req, res, next) => {
     try {
-        //Try getting token from Cookies
+        // Try getting token from Cookies
         let token = req.cookies.token;
 
         //  If no cookie, try getting from Header
@@ -17,7 +17,7 @@ const userAuth = async (req, res, next) => {
 
         // Validation
         if (!token || token === "null" || token === "undefined") {
-            return res.status(401).send("Please Login! (Token missing)");
+            return res.status(401).json({ success: false, message: "Please Login! (Token missing)" });
         }
 
         // Verify Token
@@ -26,14 +26,14 @@ const userAuth = async (req, res, next) => {
 
         const user = await User.findById(_id);
         if (!user) {
-            throw new Error("User does not exist");
+            return res.status(401).json({ success: false, message: "User does not exist" });
         }
 
         req.user = user;
-        next(); // if all good , move next
+        next(); // if all good, move next
 
     } catch (err) {
-        res.status(400).send("Auth Error: " + err.message);
+        res.status(401).json({ success: false, message: "Authentication failed: " + err.message });
     }
 };
 

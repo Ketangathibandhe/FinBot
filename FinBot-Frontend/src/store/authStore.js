@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import axios from "axios";
+import api from "../lib/api";
 
 export const useAuthStore = create(
   persist(
-    (set, get) => ({ // 'get' added so that current token can be accessed 
+    (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
@@ -20,25 +20,16 @@ export const useAuthStore = create(
         localStorage.removeItem("finbot-auth");
       },
 
-      //Updates User Data in background
+      // Updates User Data in background
       refreshUser: async () => {
         try {
-          //get Token from store
           const currentToken = get().token; 
           
           if (!currentToken) return;
 
-          const res = await axios.get(
-            `${import.meta.env.VITE_API_URL}/profile/view`,
-            { 
-              withCredentials: true,
-              headers: {
-                Authorization: `Bearer ${currentToken}` // imp to send token in Header 
-              }
-            }
-          );
+          const res = await api.get("/profile/view");
 
-          //update User so that the sidebar telegram linked status could be green 
+          // Update User so that the sidebar telegram linked status could be green 
           set({ user: res.data.data });
           
         } catch (err) {

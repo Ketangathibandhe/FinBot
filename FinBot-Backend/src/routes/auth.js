@@ -3,6 +3,7 @@ const User = require("../models/User");
 const authRouter = express.Router();
 const bcrypt = require("bcrypt");
 const { validateSignUpData } = require("../utils/validation");
+const { authLimiter, forgotPasswordLimiter } = require("../middleware/rateLimiter");
 const axios = require('axios');
 
 const cookieOptions = {
@@ -13,7 +14,8 @@ const cookieOptions = {
   maxAge: 30 * 24 * 60 * 60 * 1000,
 };
 
-authRouter.post("/signup", async (req, res) => {
+//  SIGNUP 
+authRouter.post("/signup", authLimiter, async (req, res) => {
   try {
     validateSignUpData(req);
     const { name, email, password } = req.body;
@@ -25,14 +27,14 @@ authRouter.post("/signup", async (req, res) => {
 
     res.cookie("token", token, cookieOptions);
 
-    // force token in response
-    res.json({ message: "User added!", data: savedUser, token: token });
+    res.json({ success: true, message: "Account created successfully!", data: savedUser, token: token });
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).json({ success: false, message: err.message });
   }
 });
 
-authRouter.post("/login", async (req, res) => {
+//  LOGIN 
+authRouter.post("/login", authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -50,23 +52,24 @@ authRouter.post("/login", async (req, res) => {
 
     res.cookie("token", token, cookieOptions);
 
-    res.json({ message: "Logged in!", user: user, token: token });
+    res.json({ success: true, message: "Logged in!", user: user, token: token });
   } catch (error) {
-    res.status(400).json({ message: "Login failed: " + error.message });
+    res.status(400).json({ success: false, message: "Login failed: " + error.message });
   }
 });
 
+//  LOGOUT 
 authRouter.post("/logout", async (req, res) => {
   try {
     res.clearCookie("token", cookieOptions);
-    res.status(200).send("Logged out successfully..");
+    res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (error) {
-    res.status(400).send("Logout failed: " + error.message);
+    res.status(400).json({ success: false, message: "Logout failed: " + error.message });
   }
 });
 
-// FORGOT PASSWORD ROUTE
-authRouter.post("/forgot-password", async (req, res) => {
+//  FORGOT PASSWORD 
+authRouter.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
@@ -102,15 +105,14 @@ authRouter.post("/forgot-password", async (req, res) => {
       }
     );
 
-    res.status(200).json({ message: "OTP sent to your Telegram Bot!" });
+    res.status(200).json({ success: true, message: "OTP sent to your Telegram Bot!" });
   } catch (error) {
-    console.error("Forgot Password Error:", error);
-    res.status(400).send(error.message || "Server Error");
+    res.status(400).json({ success: false, message: error.message || "Server Error" });
   }
 });
 
-// RESET PASSWORD ROUTE
-authRouter.post("/reset-password", async (req, res) => {
+//  RESET PASSWORD 
+authRouter.post("/reset-password", authLimiter, async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
 
@@ -139,10 +141,9 @@ authRouter.post("/reset-password", async (req, res) => {
 
     res
       .status(200)
-      .json({ message: "Password Changed Successfully! Please Login." });
+      .json({ success: true, message: "Password Changed Successfully! Please Login." });
   } catch (error) {
-    console.error("Reset Password Error:", error);
-    res.status(400).send(error.message);
+    res.status(400).json({ success: false, message: error.message });
   }
 });
 

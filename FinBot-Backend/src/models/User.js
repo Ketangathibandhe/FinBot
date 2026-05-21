@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate(value) {
       if (!validator.isStrongPassword(value)) {
-        throw new Error("Enter Strong password: " + value);
+        throw new Error("Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 symbol");
       }
     },
   },
@@ -50,6 +50,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  verificationCodeExpires: {
+    type: Date,
+    default: null
+  },
   resetPasswordOtp: { 
     type: String,
     default: null
@@ -62,7 +66,23 @@ const userSchema = new mongoose.Schema({
   timestamps: true, 
 });
 
-// Schema Methods
+//  Indexes for Performance 
+userSchema.index({ telegramChatId: 1 }); // Bot lookups by chatId
+userSchema.index({ verificationCode: 1 }); // Code verification lookups
+
+//  Strip Sensitive Fields from JSON 
+userSchema.methods.toJSON = function() {
+  const user = this.toObject();
+  delete user.password;
+  delete user.resetPasswordOtp;
+  delete user.resetPasswordExpires;
+  delete user.verificationCode;
+  delete user.verificationCodeExpires;
+  delete user.__v;
+  return user;
+};
+
+//  Schema Methods 
 
 userSchema.methods.getJWT = async function() {
   const user = this;

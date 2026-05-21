@@ -4,19 +4,22 @@ import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import ClickSpark from "./components/ReactBits/ClickSpark.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <ClickSpark
-        sparkColor="#fff"
-        sparkSize={40}
-        sparkRadius={25}
-        sparkCount={10}
-        duration={300}
-      >
-        <App />
-      </ClickSpark>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ClickSpark
+          sparkColor="#fff"
+          sparkSize={40}
+          sparkRadius={25}
+          sparkCount={10}
+          duration={300}
+        >
+          <App />
+        </ClickSpark>
+      </BrowserRouter>
+    </ErrorBoundary>
   </StrictMode>
 );

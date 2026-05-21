@@ -18,7 +18,7 @@ const getCurrentMonthRange = () => {
     return { start, end };
 };
 
-// ADD-EXPENSE API
+//  ADD EXPENSE 
 router.post("/add", userAuth, upload.single("receipt"), async (req, res) => {
     try {
         const { amount, title, category, date } = req.body;
@@ -26,11 +26,10 @@ router.post("/add", userAuth, upload.single("receipt"), async (req, res) => {
 
         // Case A: Receipt Upload
         if (req.file) {
-            console.log("Analyzing Receipt with AI...");
             const aiData = await analyzeExpense(null, req.file.buffer);
 
              if (!aiData) {
-                return res.status(400).send("AI failed to read receipt. Please try manual entry.");
+                return res.status(400).json({ success: false, message: "AI failed to read receipt. Please try manual entry." });
             }
 
             const detectedMode = (aiData.mode && aiData.mode.toLowerCase() === 'online') ? 'Online' : 'Cash';
@@ -44,7 +43,7 @@ router.post("/add", userAuth, upload.single("receipt"), async (req, res) => {
         } 
         // Case B: Manual Entry
         else {
-            if (!amount || !title) return res.status(400).send("Amount & Title required!");
+            if (!amount || !title) return res.status(400).json({ success: false, message: "Amount & Title required!" });
             expenseData = {
                 title: title,
                 amount: parseFloat(amount),
@@ -60,15 +59,41 @@ router.post("/add", userAuth, upload.single("receipt"), async (req, res) => {
         });
 
         await newExpense.save();
-        res.json({ message: "Expense Added Successfully!", data: newExpense });
+        res.json({ success: true, message: "Expense Added Successfully!", data: newExpense });
 
     } catch (err) {
-        console.error("Add Expense Error:", err);
-        res.status(500).send("Server Error: " + err.message);
+        res.status(500).json({ success: false, message: "Server Error: " + err.message });
     }
 });
 
-//  GET USER EXPENSES (Current Month Only)
+//  EDIT EXPENSE 
+router.put("/edit/:id", userAuth, async (req, res) => {
+    try {
+        const { title, amount, category, mode, date } = req.body;
+
+        // Only update fields that were sent
+        const updateFields = {};
+        if (title) updateFields.title = title;
+        if (amount) updateFields.amount = parseFloat(amount);
+        if (category) updateFields.category = category;
+        if (mode) updateFields.mode = mode;
+        if (date) updateFields.date = new Date(date);
+
+        const updatedExpense = await Expense.findOneAndUpdate(
+            { _id: req.params.id, user: req.user._id }, // Ensures user owns the expense
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedExpense) return res.status(404).json({ success: false, message: "Expense not found!" });
+
+        res.json({ success: true, message: "Expense Updated Successfully!", data: updatedExpense });
+    } catch (err) {
+        res.status(400).json({ success: false, message: "Error: " + err.message });
+    }
+});
+
+//  GET USER EXPENSES (Current Month Only) 
 router.get("/user-expenses", userAuth, async (req, res) => {
     try {
         const { start, end } = getCurrentMonthRange(); 
@@ -78,13 +103,13 @@ router.get("/user-expenses", userAuth, async (req, res) => {
             date: { $gte: start, $lte: end } 
         }).sort({ date: -1 });
         
-        res.json({ message: "Fetched Successfully", data: expenses });
+        res.json({ success: true, message: "Fetched Successfully", data: expenses });
     } catch (err) {
-        res.status(400).send("Error: " + err.message);
+        res.status(400).json({ success: false, message: "Error: " + err.message });
     }
 });
 
-// DELETE EXPENSE
+//  DELETE EXPENSE 
 router.delete("/delete/:id", userAuth, async (req, res) => {
     try {
         const deletedExpense = await Expense.findOneAndDelete({
@@ -92,21 +117,21 @@ router.delete("/delete/:id", userAuth, async (req, res) => {
             user: req.user._id
         });
 
-        if (!deletedExpense) return res.status(404).send("Not found!");
+        if (!deletedExpense) return res.status(404).json({ success: false, message: "Expense not found!" });
 
-        res.json({ message: "Expense Deleted Successfully!" });
+        res.json({ success: true, message: "Expense Deleted Successfully!" });
     } catch (err) {
-        res.status(400).send("Error: " + err.message);
+        res.status(400).json({ success: false, message: "Error: " + err.message });
     }
 });
 
-// GET STATS
+//  GET STATS 
 router.get("/stats", userAuth, async (req, res) => {
     try {
         const { start, end } = getCurrentMonthRange();
         const filter = { user: req.user._id, date: { $gte: start, $lte: end } };
         
-        //Promise.all used so that all three querier runs in parallel
+        //Promise.all used so that all three queries run in parallel
         const [categoryStats, dailyStats, modeStats] = await Promise.all([
             Expense.aggregate([
                 { $match: filter },
@@ -125,9 +150,9 @@ router.get("/stats", userAuth, async (req, res) => {
 
         const totalExpense = categoryStats.reduce((acc, curr) => acc + curr.total, 0);
 
-        res.json({ categoryStats, dailyStats, totalExpense, modeStats });
+        res.json({ success: true, categoryStats, dailyStats, totalExpense, modeStats });
     } catch (err) {
-        res.status(400).send(err.message);
+        res.status(400).json({ success: false, message: err.message });
     }
 });
 

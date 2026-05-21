@@ -13,10 +13,11 @@ import StatsGrid from "./Widgets/StatsGrid";
 import SpendingChart from "./Widgets/SpendingChart";
 import CategoryChart from "./Widgets/CategoryChart";
 import RecentTransactions from "./Widgets/RecentTransactions";
+import DashboardSkeleton from "./Widgets/SkeletonLoader";
 
 import Footer from "../Footer";
 
-import{io} from "socket.io-client";
+import { io } from "socket.io-client";
 
 const Dashboard = () => {
   const [open, setOpen] = useState(false);
@@ -24,8 +25,8 @@ const Dashboard = () => {
   const [openAddExpenseDrawer, setOpenAddExpenseDrawer] = useState(false);
   const [openReportDrawer, setOpenReportDrawer] = useState(false);
 
-  const { token, user } = useAuthStore();
-  const { expenses, stats, fetchDashboardData, deleteExpense } =
+  const { token, user, refreshUser } = useAuthStore();
+  const { expenses, stats, loading, fetchDashboardData, deleteExpense } =
     useExpenseStore();
 
   // Initial Fetch
@@ -33,38 +34,38 @@ const Dashboard = () => {
     if (token) fetchDashboardData(token);
   }, [token]);
 
-  //SOCKET.IO LOGIC (Replaces Polling)
+  // SOCKET.IO LOGIC (Replaces Polling)
   useEffect(() => {
-    if (!token|| !user) return;
-   const SOCKET_URL = import.meta.env.VITE_API_URL.replace('/api', '');
+    if (!token || !user) return;
+    const SOCKET_URL = import.meta.env.VITE_API_URL.replace("/api", "");
     // Connect to Backend
 
     const socket = io(SOCKET_URL, {
-        withCredentials: true,
-        transports: ["websocket"], // this is imp for render
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
+      withCredentials: true,
+      transports: ["websocket"], // this is imp for render
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
 
-    // join room
+    // Join room
     socket.on("connect", () => {
-        console.log("Socket Connected:", socket.id);
-        socket.emit("join-room", user._id); // Join room with User ID
+      socket.emit("join-room", user._id); // Join room with User ID
     });
-    //listen when backend says expense-updated
+    // Listen when backend says expense-updated
     socket.on("expense-updated", () => {
-        console.log("Real-time update received!");
-        // 'true' flag ensures loading spinner doesn't show (background refresh)
-        fetchDashboardData(token, true);
+      // 'true' flag ensures loading spinner doesn't show (background refresh)
+      fetchDashboardData(token, true);
     });
 
-    // User Linked update (green dot in sidebar for linked status)
+    // User Linked update (refresh user data instead of full page reload)
     socket.on("user-linked", () => {
-        window.location.reload(); 
+      refreshUser();
     });
-    
-    return () => {socket.disconnect();} // Cleanup on unmount
-  }, [token, user,fetchDashboardData]);
+
+    return () => {
+      socket.disconnect();
+    }; // Cleanup on unmount
+  }, [token, user, fetchDashboardData, refreshUser]);
 
   const currentMonthYear = new Date().toLocaleString("default", {
     month: "long",
@@ -170,22 +171,29 @@ const Dashboard = () => {
         <div className="flex-grow w-full max-w-[1920px] mx-auto px-6 sm:px-12 pb-12 pt-6 space-y-6">
           <TelegramAlert onLinkClick={() => setOpenTelegramDrawer(true)} />
 
-          <StatsGrid stats={stats} expensesCount={expenses.length} />
+          {/* Show skeleton while loading, real content when loaded */}
+          {loading && expenses.length === 0 ? (
+            <DashboardSkeleton />
+          ) : (
+            <>
+              <StatsGrid stats={stats} expensesCount={expenses.length} />
 
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 min-h-[400px]">
-            <SpendingChart data={stats.dailyStats} />
-            <CategoryChart
-              data={stats.categoryStats}
-              total={stats.totalExpense}
-            />
-          </div>
-          <div className="lg:mt-16">
-            <RecentTransactions
-              expenses={expenses}
-              onDelete={deleteExpense}
-              token={token}
-            />
-          </div>
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 min-h-[400px]">
+                <SpendingChart data={stats.dailyStats} />
+                <CategoryChart
+                  data={stats.categoryStats}
+                  total={stats.totalExpense}
+                />
+              </div>
+              <div className="lg:mt-16">
+                <RecentTransactions
+                  expenses={expenses}
+                  onDelete={deleteExpense}
+                  token={token}
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {/* FOOTER */}

@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "../lib/api";
+import toast from "react-hot-toast";
 
 export const useExpenseStore = create((set, get) => ({
   expenses: [],
@@ -19,12 +20,8 @@ export const useExpenseStore = create((set, get) => ({
 
     try {
       const [expensesRes, statsRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_API_URL}/expense/user-expenses`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get(`${import.meta.env.VITE_API_URL}/expense/stats`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        api.get("/expense/user-expenses"),
+        api.get("/expense/stats"),
       ]);
 
       const newExpenses = expensesRes.data.data;
@@ -46,7 +43,7 @@ export const useExpenseStore = create((set, get) => ({
       }
 
 
-      // get Current Data from store
+      // Get Current Data from store
       const currentExpenses = get().expenses;
       const currentStats = get().stats;
 
@@ -55,13 +52,13 @@ export const useExpenseStore = create((set, get) => ({
         JSON.stringify(newExpenses) === JSON.stringify(currentExpenses) &&
         JSON.stringify(newStats) === JSON.stringify(currentStats);
 
-      // if same then stop here 
+      // If same then stop here 
       if (isDataSame) {
         if (!isBackground) set({ loading: false });
         return; 
       }
 
-      // if data changes then update
+      // If data changes then update
       set({
         expenses: newExpenses,
         stats: newStats,
@@ -77,9 +74,7 @@ export const useExpenseStore = create((set, get) => ({
   // Delete Action
   deleteExpense: async (id, token) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/expense/delete/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/expense/delete/${id}`);
 
       set((state) => ({
         expenses: state.expenses.filter((e) => e._id !== id),
@@ -88,7 +83,29 @@ export const useExpenseStore = create((set, get) => ({
       get().fetchDashboardData(token, true); 
 
     } catch (err) {
-      alert("Failed to delete");
+      toast.error("Failed to delete expense");
+    }
+  },
+
+  // Edit Action
+  editExpense: async (id, updateData, token) => {
+    try {
+      const res = await api.put(`/expense/edit/${id}`, updateData);
+      
+      // Update local state immediately
+      set((state) => ({
+        expenses: state.expenses.map((e) => 
+          e._id === id ? res.data.data : e
+        ),
+      }));
+
+      // Refresh stats in background
+      get().fetchDashboardData(token, true);
+      
+      return true;
+    } catch (err) {
+      toast.error("Failed to update expense");
+      return false;
     }
   },
 
@@ -96,8 +113,7 @@ export const useExpenseStore = create((set, get) => ({
   downloadReport: async (month, year, token) => {
     set({ loading: true });
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/reports/pdf?month=${month}&year=${year}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await api.get(`/reports/pdf?month=${month}&year=${year}`, {
         responseType: 'blob',
       });
 
@@ -117,6 +133,7 @@ export const useExpenseStore = create((set, get) => ({
     } catch (err) {
       console.error("PDF Download Error:", err);
       set({ loading: false });
+      toast.error("Failed to download report. No data found for this period.");
       return false;
     }
   }

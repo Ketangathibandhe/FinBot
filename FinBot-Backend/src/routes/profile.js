@@ -7,11 +7,11 @@ const { userAuth } = require('../middleware/auth');
 // GET /view - to see user data
 router.get("/view", userAuth, async (req, res) => {
   try {
-    // req.user comming from middleware 
+    // req.user coming from middleware 
     const user = req.user; 
-    res.json({ message: "User Profile Loaded", data: user });
+    res.json({ success: true, message: "User Profile Loaded", data: user });
   } catch (err) {
-    res.status(400).send("ERROR: " + err.message);
+    res.status(400).json({ success: false, message: err.message });
   }
 });
 
@@ -23,19 +23,21 @@ router.post("/generate-code", userAuth, async (req, res) => {
     //Random 6-digit code (e.g. 849201)
     const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // save to DB so that BOT can verify later
+    // Save to DB with 10-minute expiry so that BOT can verify later
     user.verificationCode = randomCode;
+    user.verificationCodeExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
     await user.save();
 
-    // send code to user in response
+    // Send code to user in response
     res.json({ 
+        success: true,
         message: "Code Generated Successfully!", 
         code: randomCode,
-        instruction: `Send the code to WhatsApp : Connect ${randomCode}`
+        instruction: `Send this command to the Telegram Bot: /start ${randomCode}`
     });
 
   } catch (err) {
-    res.status(400).send("ERROR: " + err.message);
+    res.status(400).json({ success: false, message: err.message });
   }
 });
 
