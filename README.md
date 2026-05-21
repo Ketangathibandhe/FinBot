@@ -644,25 +644,25 @@ VITE_SOCKET_URL=http://localhost:5000
 ### Production Architecture
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Frontend (Vercel/Render)                                │
+│  Frontend (Vercel/Render)                               │
 │  - Automatic deployments from main branch               │
-│  - CDN delivery                                          │
+│  - CDN delivery                                         │
 │  - Environment variables via dashboard                  │
 └─────────────────────────────────────────────────────────┘
                          ↓
 ┌─────────────────────────────────────────────────────────┐
-│  Backend (Render/Heroku)                                 │
-│  - Express API Server                                    │
-│  - Telegram Bot running                                  │
-│  - Socket.IO server                                      │
-│  - PDF generation                                        │
+│  Backend (Render/Heroku)                                │
+│  - Express API Server                                   │
+│  - Telegram Bot running                                 │
+│  - Socket.IO server                                     │
+│  - PDF generation                                       │
 └─────────────────────────────────────────────────────────┘
                          ↓
 ┌─────────────────────────────────────────────────────────┐
-│  Database (MongoDB Atlas)                                │
-│  - Managed MongoDB cluster                               │
-│  - Automatic backups                                     │
-│  - Global distribution                                   │
+│  Database (MongoDB Atlas)                               │
+│  - Managed MongoDB cluster                              │
+│  - Automatic backups                                    │
+│  - Global distribution                                  │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -741,3 +741,5 @@ curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook?url=<YOUR_
 **Built by Ketan Gathibandhe**
 
 [GitHub](https://github.com/Ketangathibandhe) • [LinkedIn](https://www.linkedin.com/in/ketangathibandhe/) • [Email](mailto:ketangathibandhe04@gmail.com)
+
+
