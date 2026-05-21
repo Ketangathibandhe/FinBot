@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Aurora from "../components/ReactBits/Aurora";
-import axios from "axios";
+import api from "../lib/api";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../store/authStore";
 
@@ -25,26 +25,20 @@ const Signup = () => {
       const cleanEmail = email.toLowerCase().trim();
       const cleanPassword = password.trim();
 
-      // Signup API Call
-      await axios.post(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+      // Signup API Call (returns token directly — no need for separate login)
+      const res = await api.post("/auth/signup", {
         name,
         email: cleanEmail, 
         password: cleanPassword, 
       });
 
-      // Auto-Login API Call
-      const loginRes = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        { email: cleanEmail, password: cleanPassword }, { withCredentials: true }
-      );
-
-      //  Check if token exists before saving
-      if (!loginRes.data.token) {
+      // Check if token exists before saving
+      if (!res.data.token) {
         throw new Error("Signup success but Token missing!");
       }
 
       // saved in store (Zustand)
-      login(loginRes.data.user, loginRes.data.token);
+      login(res.data.data, res.data.token);
 
       toast.success("Account Created! ");
       navigate("/dashboard"); // jump to Dashboard

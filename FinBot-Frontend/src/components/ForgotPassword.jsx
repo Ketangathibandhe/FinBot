@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../lib/api";
 import toast from "react-hot-toast";
 import {
   Mail,
@@ -55,9 +55,9 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/auth/forgot-password`, {
+      await api.post("/auth/forgot-password", {
         email,
-      },{ withCredentials: true });
+      });
       toast.success("OTP sent to your Telegram Bot! ");
       setStep(2); //next step
     } catch (error) {
@@ -80,7 +80,7 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/auth/reset-password`, {
+      await api.post("/auth/reset-password", {
         email,
         otp: finalOtp,
         newPassword,

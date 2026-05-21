@@ -1,6 +1,7 @@
 import { X, Copy, Send, CheckCircle, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../lib/api";
+import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/authStore";
 
 const getTelegramLink = () => {
@@ -54,17 +55,10 @@ const TelegramLinkDrawer = ({ open, onClose }) => {
   const generateCode = async () => {
     try {
       setLoading(true);
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/profile/generate-code`,
-        {},
-        {
-          withCredentials: true,
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await api.post("/profile/generate-code");
       setCode(res.data.code);
     } catch {
-      alert("Failed to generate code. Please re-login.");
+      toast.error("Failed to generate code. Please re-login.");
     } finally {
       setLoading(false);
     }
@@ -176,7 +170,7 @@ const TelegramLinkDrawer = ({ open, onClose }) => {
                                 <a
                                     href={telegramLink}
                                     target="_blank"
-                                    rel="noreferrer"
+                                    rel="noopener noreferrer"
                                     className="w-full py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-3 border border-white/10"
                                 >
                                     <Send size={20} />

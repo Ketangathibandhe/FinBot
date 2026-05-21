@@ -1,6 +1,6 @@
 import { X, Upload, Trash2, PlusCircle, Calendar, IndianRupee, Tag, ShoppingBag, ChevronDown } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import api from "../../lib/api";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/authStore";
 
@@ -66,17 +66,9 @@ const AddExpenseDrawer = ({ open, onClose }) => {
       if(date) formData.append("date", date);
       if(selectedFile) formData.append("receipt", selectedFile);
 
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/expense/add`, 
-        formData,
-        {
-          withCredentials: true,
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await api.post("/expense/add", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       toast.success("Expense added successfully!");
       onClose();

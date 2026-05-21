@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Aurora from "../components/ReactBits/Aurora";
-import axios from "axios";
+import api from "../lib/api";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../store/authStore";
 
@@ -27,10 +27,10 @@ const Login = () => {
       const cleanEmail = email.toLowerCase().trim();
       const cleanPassword = password.trim(); 
 
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, {
+      const res = await api.post("/auth/login", {
         email: cleanEmail,
         password: cleanPassword,
-      },{ withCredentials: true });
+      });
 
       // checks if the token is present in the res or not
       if (!res.data.token) {
