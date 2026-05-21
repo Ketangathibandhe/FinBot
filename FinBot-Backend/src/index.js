@@ -12,8 +12,9 @@ const errorHandler = require("./middleware/errorHandler");
 const http = require("http");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
+const path = require("path");
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 // Validate required environment variables before starting
 validateEnv();
