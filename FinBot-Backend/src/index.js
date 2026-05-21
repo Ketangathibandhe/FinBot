@@ -3,7 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
-const mongoSanitize = require("express-mongo-sanitize");
+
 const morgan = require("morgan");
 const { connectDB } = require("./config/database");
 const { validateEnv } = require("./config/validateEnv");
@@ -44,7 +44,9 @@ const io = new Server(server, {
 
 //Security Middleware 
 app.use(helmet()); // Sets security HTTP headers
-app.use(mongoSanitize()); // Prevents NoSQL injection
+
+// Mongoose 9 built-in NoSQL injection protection (replaces express-mongo-sanitize)
+mongoose.set('sanitizeFilter', true);
 
 //Request Logging
 if (process.env.NODE_ENV !== "production") {
