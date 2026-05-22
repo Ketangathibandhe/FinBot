@@ -45,9 +45,6 @@ const io = new Server(server, {
 //Security Middleware 
 app.use(helmet()); // Sets security HTTP headers
 
-// Mongoose 9 built-in NoSQL injection protection (replaces express-mongo-sanitize)
-mongoose.set('sanitizeFilter', true);
-
 //Request Logging
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
